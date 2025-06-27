@@ -1,0 +1,195 @@
+﻿@model Bingi_Storage.Models.Product
+@{
+    ViewData["Title"] = "Details";
+}
+<link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+<div class="bingi-product-page">
+    <!-- Header/Banner -->
+    <section class="main-header glass dynamic-bg">
+        <div class="header-left">
+            <img src="@Model.ImageUrl" alt="Game Logo" class="game-logo" />
+            <div class="game-info">
+                <h1 class="game-title gold montserrat">@Model.Title</h1>
+                <span class="publisher">by @Model.Publisher?.Name</span>
+                <div class="stats">
+                    <span>⭐ @Model.AverageRating <span class="muted">(@Model.TotalRatings reviews)</span></span>
+                    <span>• @Model.DownloadCount downloads</span>
+                    <span>• 🎮 Platforms</span>
+                    <span>• @Model.AgeRestriction+</span>
+                </div>
+                <p class="short-desc">@Model.ShortDescription</p>
+                <div class="actions">
+                    <button class="btn gold">Buy $@Model.Price</button>
+                    <button class="btn glass">Wishlist</button>
+                    <button class="btn glass">Share</button>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn glass">Edit</a>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <video src="trailer.mp4" poster="@Model.ImageUrl" controls class="trailer"></video>
+        </div>
+    </section>
+
+    <div class="main-content-area">
+        <div class="main-sections">
+            <!-- Screenshots Carousel -->
+            <section class="glass section screenshots">
+                <h2 class="gold montserrat">Screenshots</h2>
+                <div class="carousel" id="carousel">
+                    <button class="carousel-btn left" onclick="prevSlide()">&#8249;</button>
+                    <div class="carousel-track" id="carousel-track">
+                        @if (Model.ProductMedia != null)
+                        {
+                            foreach (var media in Model.ProductMedia)
+                            {
+                                <img src="@media.ImageUrl" alt="Screenshot" />
+                            }
+                        }
+                        else
+                        {
+                            <img src="https://placehold.co/320x180/png?text=1" alt="Screenshot 1" />
+                            <img src="https://placehold.co/320x180/png?text=2" alt="Screenshot 2" />
+                            <img src="https://placehold.co/320x180/png?text=3" alt="Screenshot 3" />
+                        }
+                    </div>
+                    <button class="carousel-btn right" onclick="nextSlide()">&#8250;</button>
+                </div>
+            </section>
+
+            <!-- Description -->
+            <section class="glass section description">
+                <h2 class="gold montserrat">Description</h2>
+                <div class="desc-content" id="desc-content">
+                    <p>
+                        @Html.Raw(Model.Description)
+                        <span id="more-text" style="display:none;">
+                            <!-- More description here if needed -->
+                        </span>
+                    </p>
+                    <button class="btn-link gold" id="read-more">Read more</button>
+                </div>
+            </section>
+
+            <!-- Ratings & Reviews -->
+            <section class="glass section reviews">
+                <h2 class="gold montserrat">Ratings & Reviews</h2>
+                <div class="rating-summary">
+                    <span class="rating-score">@Model.AverageRating</span>
+                    <span class="stars">★★★★★</span>
+                    <span class="muted">(@Model.TotalRatings reviews)</span>
+                </div>
+                <div class="rating-bars">
+                    <div><span>5</span><div class="bar"><div class="fill" style="width:90%"></div></div></div>
+                    <div><span>4</span><div class="bar"><div class="fill" style="width:8%"></div></div></div>
+                    <div><span>3</span><div class="bar"><div class="fill" style="width:1%"></div></div></div>
+                    <div><span>2</span><div class="bar"><div class="fill" style="width:0.5%"></div></div></div>
+                    <div><span>1</span><div class="bar"><div class="fill" style="width:0.5%"></div></div></div>
+                </div>
+                <div class="review-card glass">
+                    <div class="review-header">
+                        <span class="review-user">John Doe</span>
+                        <span class="review-stars">★★★★★</span>
+                    </div>
+                    <div class="review-body">
+                        <p>Amazing game! Had a blast playing with friends. Highly recommend.</p>
+                    </div>
+                    <div class="review-footer">
+                        <span class="review-date">2 days ago</span>
+                        <button class="btn-link">👍 42</button>
+                        <button class="btn-link">Reply</button>
+                        <button class="btn-link gold" onclick="toggleReview(this)">Read more</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Requirements -->
+            <section class="glass section sysreq">
+                <h2 class="gold montserrat">System Requirements</h2>
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>Minimum</th>
+                        <th>Recommended</th>
+                    </tr>
+                    <tr>
+                        <td>OS</td>
+                        <td>Windows 10</td>
+                        <td>Windows 11</td>
+                    </tr>
+                    <tr>
+                        <td>Processor</td>
+                        <td>Intel i3</td>
+                        <td>Intel i5</td>
+                    </tr>
+                    <tr>
+                        <td>Memory</td>
+                        <td>4 GB RAM</td>
+                        <td>8 GB RAM</td>
+                    </tr>
+                    <tr>
+                        <td>Storage</td>
+                        <td>10 GB</td>
+                        <td>20 GB</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Related Games -->
+            <section class="glass section related">
+                <h2 class="gold montserrat">Recommended Games</h2>
+                <div class="related-list">
+                    <div class="related-card glass">
+                        <img src="https://placehold.co/60x60/png?text=Game1" alt="Game 1" />
+                        <span>Game Title 1</span>
+                    </div>
+                    <div class="related-card glass">
+                        <img src="https://placehold.co/60x60/png?text=Game2" alt="Game 2" />
+                        <span>Game Title 2</span>
+                    </div>
+                    <div class="related-card glass">
+                        <img src="https://placehold.co/60x60/png?text=Game3" alt="Game 3" />
+                        <span>Game Title 3</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <section class="glass sidebar-section">
+                <h3 class="gold montserrat">Additional Info</h3>
+                <ul>
+                    <li><strong>Publisher:</strong> @Model.Publisher?.Name</li>
+                    <li><strong>Version:</strong> @Model.Version</li>
+                    <li><strong>Release Date:</strong> @Model.ReleaseDate?.ToString("yyyy-MM-dd")</li>
+                    <li><strong>Size:</strong> @Model.FileSize GB</li>
+                    <li><strong>OS:</strong> Windows, Android</li>
+                    <li><strong>Website:</strong> <a href="#" class="gold">Visit</a></li>
+                </ul>
+            </section>
+            <section class="glass sidebar-section">
+                <h3 class="gold montserrat">More by Publisher</h3>
+                <div class="more-publisher">
+                    <div class="pub-game">
+                        <img src="https://placehold.co/40x40/png?text=G1" alt="Game" />
+                        <div>
+                            <span>Title 1</span>
+                            <span class="muted">Dummy game</span>
+                        </div>
+                    </div>
+                    <div class="pub-game">
+                        <img src="https://placehold.co/40x40/png?text=G2" alt="Game" />
+                        <div>
+                            <span>Title 2</span>
+                            <span class="muted">Dummy game</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </aside>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/site.js" asp-append-version="true"></script>
+}

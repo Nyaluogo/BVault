@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="profile-menu glass">
+        <button class="profile-btn" id="profileDropdownBtn" aria-haspopup="true" aria-expanded="false">
+            <img src="https://i.pravatar.cc/32?img=1" alt="@User.Identity?.Name!" class="profile-pic" />
+            <span class="profile-name gold montserrat">@User.Identity?.Name</span>
+            <span class="dropdown-caret gold">&#9662;</span>
+        </button>
+        <div class="dropdown-menu glass" id="profileDropdownMenu" aria-labelledby="profileDropdownBtn">
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
+            <a class="dropdown-item" href="#">Dashboard</a>
+            <a class="dropdown-item" href="#">Library</a>
+            <a class="dropdown-item" href="#">Wallet</a>
+            <a class="dropdown-item" href="#">Settings</a>
+            <form class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                <button type="submit" class="btn btn-link gold" style="padding:0;">Logout</button>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <div class="profile-menu glass">
+        <a class="btn glass gold montserrat" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="btn gold montserrat" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        
+    </script>
+}

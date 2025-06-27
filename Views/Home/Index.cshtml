@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Bingi_Storage.Models.Product>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4" style="color:#556B2F;" ">Bingistore</h1>
+    <p>A New Reality, A Different Perspective</a>.</p>
+</div>
+<div class="home-page">
+
+    <main>
+        <h1>Welcome to the BingiStore</h1>
+        @* Here you can include a list of games or other content *@
+
+
+        <h2 class="game-list-title">Featured Games</h2>
+
+        <div class="game-tiles-grid">
+            @* Example game tiles. Replace with dynamic content as needed. *@
+            @foreach (var item in Model)
+            {
+                <div class="game-tile glass-tile">
+                    <img src="https://placehold.co/200x200?text=BINGIMAN+@item.Id" alt="Game @item.Title" class="game-tile-img" />
+                    <div class="game-tile-info">
+                        <h5>@item.Title</h5>
+                        <p>Short description for Game @item.ShortDescription</p>
+                        <button class="btn btn-primary btn-sm" onclick="location.href='@Url.Action("Details", "Products", new { id = @item.Id })'">View</button>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+    </main>
+
+</div>

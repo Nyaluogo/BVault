@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Bingi Store</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Bingi_Storage.styles.css" asp-append-version="true" />
+    <meta name="theme-color" content="#101014" />
+</head>
+<body class="layout-vertical">
+    <!-- Header/Navbar -->
+    <nav class="navbar glass bingi-navbar" role="navigation" aria-label="Main navigation">
+        <div class="navbar-left">
+            <a class="logo gold montserrat" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Bingi Store Home">🎲 | Bingi Store</a>
+            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Browse</a>
+            <a class="nav-link" href="#">Devlogs</a>
+            <a class="nav-link" href="#">Community</a>
+        </div>
+        <div class="navbar-right">
+            <a class="btn platinum montserrat" asp-controller="Products" asp-action="Create" style="margin-right:1rem;">
+                <span style="font-weight:600;">Create</span>
+            </a>
+            <form class="d-inline" role="search" aria-label="Site search" method="get" asp-controller="Products" asp-action="Index">
+                <input type="search" name="q" placeholder="Search..." class="search" aria-label="Search products" />
+            </form>
+            <partial name="_LoginPartial" />
+        </div>
+    </nav>
+
+
+    <main role="main" class="container flex-grow-1" tabindex="-1">
+        @RenderBody()
+    </main>
+
+    @* <footer class="footer glass" role="contentinfo">
+        <span>&copy; @DateTime.Now.Year - <span class="gold montserrat">Bingi Store</span> - All rights reserved.</span>
+        &nbsp;|&nbsp;
+        <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+        &nbsp;|&nbsp;
+        <a asp-area="" asp-controller="Home" asp-action="Privacy">Terms of Service</a>
+    </footer> *@
+
+    
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
