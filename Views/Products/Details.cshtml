@@ -19,7 +19,7 @@
                 </div>
                 <p class="short-desc">@Model.ShortDescription</p>
                 <div class="actions">
-                    <button class="btn gold">Buy $@Model.Price</button>
+                    <button class="btn gold">Buy $@Model.SalePrice</button>
                     <button class="btn glass">Wishlist</button>
                     <button class="btn glass">Share</button>
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn glass">Edit</a>
@@ -39,9 +39,9 @@
                 <div class="carousel" id="carousel">
                     <button class="carousel-btn left" onclick="prevSlide()">&#8249;</button>
                     <div class="carousel-track" id="carousel-track">
-                        @if (Model.ProductMedia != null)
+                        @if (Model.Media != null)
                         {
-                            foreach (var media in Model.ProductMedia)
+                            foreach (var media in Model.Media)
                             {
                                 <img src="@media.ImageUrl" alt="Screenshot" />
                             }

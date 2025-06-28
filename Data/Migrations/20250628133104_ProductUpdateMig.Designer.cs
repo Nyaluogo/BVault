@@ -4,6 +4,7 @@ using Bingi_Storage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bingi_Storage.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250628133104_ProductUpdateMig")]
+    partial class ProductUpdateMig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -290,14 +293,8 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<int?>("DownloadCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExternalLinks")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal?>("FileSize")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Genre")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -347,9 +344,6 @@ namespace Bingi_Storage.Data.Migrations
 
                     b.Property<decimal?>("Version")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("VideoTrailerUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -745,9 +739,6 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<string>("FileUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDemo")
-                        .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");

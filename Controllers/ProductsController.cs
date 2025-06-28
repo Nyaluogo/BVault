@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Bingi_Storage.Data;
+using Bingi_Storage.Models;
+using Bingi_Storage.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Bingi_Storage.Data;
-using Bingi_Storage.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bingi_Storage.Controllers
 {
@@ -48,7 +49,8 @@ namespace Bingi_Storage.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            return View();
+            var viewModel = new ProductCreateViewModel();
+            return View(viewModel);
         }
 
         // POST: Products/Create
@@ -56,15 +58,47 @@ namespace Bingi_Storage.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ShortDescription,Description,Price,FileSize,Version,ImageUrl,SystemRequirements,AgeRestriction,DownloadCount,AverageRating,TotalRatings,IsBettingEnabled,ProductPublishingStatus,ReleaseDate,SuspensionDate,DeleteDate,CreatedAt,UpdatedAt")] Product product)
+        public async Task<IActionResult> Create(ProductCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+               
+
+                // Map ViewModel to Product entity
+                var product = new Product
+                {
+                    Title = viewModel.Title,
+                    CustomUrl = viewModel.CustomUrl,
+                    ShortDescription = viewModel.ShortDescription,
+                    Description = viewModel.Description,
+                    DefaultPrice = viewModel.DefaultPrice,
+                    SalePrice = viewModel.SalePrice,
+                    Discount = viewModel.Discount,
+                    Version = viewModel.Version,
+                    VideoTrailerUrl = viewModel.VideoTrailerUrl,
+                    ImageUrl = viewModel.ImageUrl,
+                    SystemRequirements = viewModel.SystemRequirements,
+                    Documentation = viewModel.Documentation,
+                    Tags = viewModel.Tags,
+                    Genre = viewModel.Genre,
+                    ExternalLinks = viewModel.ExternalLinks,
+                    AgeRestriction = viewModel.AgeRestriction,
+                    IsBettingEnabled = viewModel.IsBettingEnabled,
+                    IsAIGen = viewModel.IsAIGen,
+                    PricingState = (Product.PricingStatus)viewModel.PricingState,
+                    ProductPublishingStatus = (Product.PublishingStatus)viewModel.ProductPublishingStatus,
+                    ReleaseDate = viewModel.ReleaseDate,
+                    // Set other properties as needed
+                    UpdatedAt = DateTime.UtcNow
+                };
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
+
+                //redirect to edit page
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(viewModel);
         }
 
         // GET: Products/Edit/5

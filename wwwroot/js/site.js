@@ -64,3 +64,35 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+//drag and drop handler
+document.addEventListener('DOMContentLoaded', function () {
+    const uploadBox = document.getElementById('logo-upload-box');
+    if (uploadBox) {
+        uploadBox.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+        uploadBox.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+        });
+        uploadBox.addEventListener('drop', function (e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                document.getElementById('LogoFile').files = files;
+                uploadBox.textContent = files[0].name;
+            }
+        });
+        uploadBox.addEventListener('click', function () {
+            document.getElementById('LogoFile').click();
+        });
+        document.getElementById('LogoFile').addEventListener('change', function (e) {
+            if (e.target.files.length) {
+                uploadBox.textContent = e.target.files[0].name;
+            }
+        });
+    }
+});
