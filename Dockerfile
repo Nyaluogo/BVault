@@ -29,4 +29,5 @@ RUN dotnet publish "./Bingi_Storage.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_ENVIRONMENT=Development
 ENTRYPOINT ["dotnet", "Bingi_Storage.dll"]
