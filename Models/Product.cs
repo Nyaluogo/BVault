@@ -33,6 +33,7 @@ namespace Bingi_Storage.Models
         public ICollection<ProductMedia>? Media { get; set; }
         public ICollection<ProductPayload>? Payloads { get; set; }
         public Publisher? Publisher { get; set; }
+        //public AppUser productOwner { get; set; }
         public ICollection<ProductCategory>? Category { get; set; }
         public bool IsBettingEnabled { get; set; }
         public bool IsAIGen { get; set; } = false;

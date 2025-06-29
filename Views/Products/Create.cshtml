@@ -13,7 +13,7 @@
         </div>
     </section>
 
-    <form asp-action="Create" enctype="multipart/form-data" autocomplete="off">
+    <form asp-action="Create" enctype="multipart/form-data" autocomplete="off" accept="image/*,video/*,audio/*,.zip,application/zip,application/pdf">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <!-- Basic Info -->
@@ -41,9 +41,10 @@
                 <div class="col-md-5">
                     <div class="form-group mb-3">
                         <label class="form-label">Upload Logo <span class="form-guideline">(min 315x250)</span></label>
-                        <div id="logo-upload-box" class="upload-box">Upload Logo</div>
-                        <input type="file" id="LogoFile" name="LogoFile" accept="image/*" style="display:none;" />
+                        <div id="logo-upload-box" class="upload-box" tabindex="0" style="cursor:pointer;">Upload Logo</div>
+                        <input type="file" id="ImageFile" name="ImageFile" accept="image/*" style="display:none;" />
                     </div>
+                    
                     <div class="form-group mb-3">
                         <label class="form-label">Video Trailer</label>
                         <input asp-for="VideoTrailerUrl" class="form-control glass-input" placeholder="YouTube or direct video URL" />
@@ -79,12 +80,40 @@
             </div>
         </section>
 
+        <!-- Uploads -->
+        <section class="form-section">
+            <h2 class="gold montserrat">Uploads</h2>
+            <div class="form-guideline">
+                Accepted formats: <strong>.zip, .rar, .iso, .apk</strong> &nbsp;|&nbsp; Max size: <strong>4GB</strong>
+            </div>
+            <div id="payload-upload-box" class="upload-box" tabindex="0" style="cursor:pointer; min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                <span id="payload-upload-text">Drop files here to upload</span>
+                <input type="file" id="PayloadFileInput" name="PayloadFileInput" multiple accept=".zip,.rar,.iso,.apk" style="display:none;" />
+            </div>
+            <div id="payload-progress-container" style="display:none; margin-top: 10px;">
+                <div style="background:#eee; border-radius:4px; overflow:hidden;">
+                    <div id="payload-progress-bar" style="height:8px; width:0; background:#ffd700;"></div>
+                </div>
+                <span id="payload-progress-percent" style="font-size:0.9em;"></span>
+            </div>
+            <div id="payload-error" class="text-danger" style="display:none; margin-top:8px;"></div>
+
+            <div style="margin-top:2rem;">
+                <h5 class="gold montserrat">Uploaded Files</h5>
+                <div id="uploaded-payloads-list">
+                    <!-- Uploaded files will be rendered here -->
+                </div>
+            </div>
+        </section>
+        
+
         <!-- Details -->
         <section class="form-section">
             <h2 class="gold montserrat">Details</h2>
             <div class="form-group mb-3">
                 <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control glass-input" rows="4"></textarea>
+                <div id="editor-container" style="background: rgba(255, 255, 255, 0.05); border-radius: 4px; margin-bottom: 10px;"></div>
+                <textarea asp-for="Description" id="description-editor" style="display: none;"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
@@ -102,6 +131,184 @@
 
 @section Scripts {
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // --- Upload Box Logic ---
+        const uploadBox = document.getElementById('payload-upload-box');
+        const fileInput = document.getElementById('PayloadFileInput');
+        const progressBar = document.getElementById('payload-progress-bar');
+        const progressPercent = document.getElementById('payload-progress-percent');
+        const errorBox = document.getElementById('payload-error');
+        const uploadedList = document.getElementById('uploaded-payloads-list');
+        const uploadText = document.getElementById('payload-upload-text');
+
+        // Store uploaded payloads in memory for demo (replace with server-side in production)
+        let uploadedPayloads = [];
+
+        function renderPayloads() {
+            uploadedList.innerHTML = '';
+            uploadedPayloads.forEach((payload, idx) => {
+                const div = document.createElement('div');
+                div.className = 'payload-item glass mb-2 p-2';
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong>${payload.name}</strong><br/>
+                            <span style="font-size:0.9em;">Size: ${payload.size}</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="deletePayload(${idx})">Delete File</button>
+                    </div>
+                    <div class="mt-2">
+                        <label>Target Platform:</label>
+                        <select class="form-select form-select-sm" style="width:auto; display:inline-block;">
+                            <option>Windows</option>
+                            <option>Web</option>
+                            <option>Linux</option>
+                            <option>Android</option>
+                        </select>
+                        <label class="ms-3"><input type="checkbox" ${payload.isDemo ? 'checked' : ''}/> This is a free demo</label>
+                    </div>
+                    <div class="mt-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Short description" value="${payload.shortDescription || ''}" />
+                    </div>
+                `;
+                uploadedList.appendChild(div);
+            });
+        }
+
+        function deletePayload(idx) {
+            uploadedPayloads.splice(idx, 1);
+            renderPayloads();
+        }
+        window.deletePayload = deletePayload;
+
+        // Drag & drop and click to select
+        uploadBox.addEventListener('click', () => fileInput.click());
+        uploadBox.addEventListener('dragover', e => {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+        uploadBox.addEventListener('dragleave', e => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+        });
+        uploadBox.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+        function handleFiles(files) {
+            errorBox.style.display = 'none';
+            for (let file of files) {
+                if (!/\.(zip|rar|iso|apk)$/i.test(file.name)) {
+                    showError('Invalid file type: ' + file.name);
+                    continue;
+                }
+                if (file.size > 4 * 1024 * 1024 * 1024) {
+                    showError('File too large: ' + file.name);
+                    continue;
+                }
+                uploadFile(file);
+            }
+        }
+
+        function showError(msg) {
+            errorBox.textContent = msg;
+            errorBox.style.display = 'block';
+        }
+
+        function uploadFile(file) {
+            // Simulate AJAX upload with progress
+            progressBar.style.width = '0%';
+            progressPercent.textContent = '';
+            document.getElementById('payload-progress-container').style.display = 'block';
+            uploadText.textContent = 'Uploading...';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 100) progress = 100;
+                progressBar.style.width = progress + '%';
+                progressPercent.textContent = Math.floor(progress) + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('payload-progress-container').style.display = 'none';
+                        uploadText.textContent = 'Drop files here to upload';
+                        // Add to uploaded list (simulate server response)
+                        uploadedPayloads.push({
+                            name: file.name,
+                            size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+                            isDemo: false,
+                            shortDescription: ''
+                        });
+                        renderPayloads();
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        // Initial render
+        renderPayloads();
+    </script>
+
+
+    <script>
+        // Initialize Quill editor
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['link', 'image', 'video'],
+                    ['blockquote', 'code-block'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Custom theme modifications for dark mode
+        document.querySelector('.ql-toolbar').classList.add('glass');
+        document.querySelector('.ql-container').classList.add('glass');
+
+        // Add custom styles to match your theme
+        const style = document.createElement('style');
+        style.textContent = `
+            .ql-toolbar.ql-snow, .ql-container.ql-snow {
+                border-color: rgba(255, 255, 255, 0.1) !important;
+            }
+            .ql-toolbar.ql-snow .ql-picker-label {
+                color: #fff !important;
+            }
+            .ql-snow .ql-stroke {
+                stroke: #fff !important;
+            }
+            .ql-snow .ql-fill {
+                fill: #fff !important;
+            }
+            .ql-editor {
+                min-height: 200px;
+                color: #fff !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Update hidden textarea before form submission
+        document.querySelector('form').addEventListener('submit', function() {
+            var html = quill.root.innerHTML;
+            document.getElementById('description-editor').value = html;
+        });
+
+        // Set initial content if exists
+        var initialContent = document.getElementById('description-editor').value;
+        if (initialContent) {
+            quill.root.innerHTML = initialContent;
+        }
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

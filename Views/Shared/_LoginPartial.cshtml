@@ -12,7 +12,7 @@
         </button>
         <div class="dropdown-menu glass" id="profileDropdownMenu" aria-labelledby="profileDropdownBtn">
             <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
-            <a class="dropdown-item" href="#">Dashboard</a>
+            <a class="dropdown-item" asp-controller="Products" asp-action="Index">Dashboard</a>
             <a class="dropdown-item" href="#">Library</a>
             <a class="dropdown-item" href="#">Wallet</a>
             <a class="dropdown-item" href="#">Settings</a>

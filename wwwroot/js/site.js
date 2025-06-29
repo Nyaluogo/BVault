@@ -96,3 +96,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    var uploadBox = document.getElementById('logo-upload-box');
+    var fileInput = document.getElementById('ImageFile');
+    if (uploadBox && fileInput) {
+        uploadBox.addEventListener('click', function () {
+            fileInput.click();
+        });
+        uploadBox.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                fileInput.click();
+                e.preventDefault();
+            }
+        });
+        fileInput.addEventListener('change', function () {
+            if (fileInput.files && fileInput.files.length > 0) {
+                uploadBox.textContent = fileInput.files[0].name;
+            } else {
+                uploadBox.textContent = 'Upload Logo';
+            }
+        });
+    }
+});
