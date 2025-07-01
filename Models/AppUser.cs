@@ -13,7 +13,11 @@ namespace Bingi_Storage.Models
         public DateTime? DateOfBirth { get; set; }
         public UserProfile Profile { get; set; }
         public ICollection<UserWallet> Wallets { get; set; }
-        //public UserLibrary Library { get; set; }
+        // 1-to-1 relationship with Publisher (nullable)
+        public Publisher? Publisher { get; set; }
+
+        // 1-to-1 relationship with UserLibrary
+        public UserLibrary? Library { get; set; }
         public enum AccountStatus { INACTIVE, ACTIVE, SUSPENDED, BANNED }
         public AccountStatus MyAccStatus { get; set; } = AccountStatus.INACTIVE;
         public enum KycStatus { VERIFIED, LEARNING, REJECTED, UNKNOWN }

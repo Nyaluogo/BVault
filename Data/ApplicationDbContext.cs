@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Bingi_Storage.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -38,19 +38,39 @@ namespace Bingi_Storage.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // UserProfile <-> AppUser (1:1)
-            modelBuilder.Entity<UserProfile>()
-                .HasOne(up => up.User)
-                .WithOne(u => u.Profile)
-                .HasForeignKey<UserProfile>(up => up.Id)
+            // AppUser <-> Publisher (1:0..1)
+            modelBuilder.Entity<AppUser>()
+                .HasOne(a => a.Publisher)
+                .WithOne(p => p.AppUser)
+                .HasForeignKey<Publisher>(p => p.AppUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // UserWallet <-> AppUser (many:1)
-            modelBuilder.Entity<UserWallet>()
-                .HasOne(uw => uw.User)
-                .WithMany(u => u.Wallets)
+            // AppUser <-> UserLibrary (1:1)
+            modelBuilder.Entity<AppUser>()
+                .HasOne(a => a.Library)
+                .WithOne(l => l.AppUser)
+                .HasForeignKey<UserLibrary>(l => l.AppUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // UserLibrary <-> Product (many:many)
+            modelBuilder.Entity<UserLibrary>()
+                .HasMany(l => l.Products)
+                .WithMany();
+
+            // AppUser <-> UserProfile (1:1)
+            modelBuilder.Entity<AppUser>()
+                .HasOne(u => u.Profile)
+                .WithOne(up => up.User)
+                .HasForeignKey<UserProfile>(up => up.UserId) // Fixed: Using UserId instead of Id
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //AppUser <-> UserWallet (1:many)
+            modelBuilder.Entity<AppUser>()
+                .HasMany(u => u.Wallets)
+                .WithOne(uw => uw.User)
                 .HasForeignKey(uw => uw.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             // Transaction <-> UserWallet (many:1, restrict delete)
             modelBuilder.Entity<Transaction>()
@@ -74,7 +94,8 @@ namespace Bingi_Storage.Data
             // Product <-> Publisher (many:1)
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Publisher)
-                .WithMany()
+                .WithMany(pub => pub.Products)
+                .HasForeignKey(p => p.PublisherId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Product <-> ProductCategory (many:many)
@@ -95,6 +116,18 @@ namespace Bingi_Storage.Data
                 .WithOne(pl => pl.Product)
                 .HasForeignKey(pl => pl.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Product <-> Product (self-referencing one-to-many)
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.ChildProducts)
+                .WithOne(p => p.ParentProduct)
+                .HasForeignKey(p => p.ParentProductId)
+                .IsRequired(false);
+
+            // Wishlist <-> Product (many-to-many)
+            modelBuilder.Entity<Wishlist>()
+                .HasMany(w => w.Products)
+                .WithMany();
 
             // Order <-> AppUser (many:1)
             modelBuilder.Entity<Order>()
@@ -146,7 +179,12 @@ namespace Bingi_Storage.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
 
-          SeedUsers(modelBuilder);
+            // Configure decimal precision for UserWallet.Balance
+            modelBuilder.Entity<UserWallet>()
+                .Property(w => w.Balance)
+                .HasPrecision(18, 2);
+
+            SeedUsers(modelBuilder);
 
             var utcNow = new DateTime(2025, 7, 1, 10, 0, 0, DateTimeKind.Utc);
 
@@ -163,20 +201,20 @@ namespace Bingi_Storage.Data
 
             //Product seed data
             modelBuilder.Entity<Product>().HasData(
-                new Product { Id = 1, Title = "BINGIMAN", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163014.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 2, Title = "Savage Gears", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/SavageGearsOfficialPoster-1-scaled.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 3, Title = "BINGIMAN 3", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 4, Title = "Debe", ShortDescription = "An exciting strategy game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 5, Title = "Political Rally", ShortDescription = "An exciting racing game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 6, Title = "Nafas", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163208.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 7, Title = "Political Fighter", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 8, Title = "Bingivision", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 9, Title = "Armed Rebellion", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
+                new Product { Id = 1, PublisherId = 1, Title = "BINGIMAN", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163014.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 2, PublisherId = 1, Title = "Savage Gears", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/SavageGearsOfficialPoster-1-scaled.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 3, PublisherId = 1, Title = "BINGIMAN 3", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 4, PublisherId = 1, Title = "Debe", ShortDescription = "An exciting strategy game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 5, PublisherId = 1, Title = "Political Rally", ShortDescription = "An exciting racing game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 6, PublisherId = 1, Title = "Nafas", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163208.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 7, PublisherId = 1, Title = "Political Fighter", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 8, PublisherId = 1, Title = "Bingivision", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 9, PublisherId = 1, Title = "Armed Rebellion", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
             );
 
             // Publisher seed data
             modelBuilder.Entity<Publisher>().HasData(
-                new Publisher { Id = 1, Name = "Default Publisher", PublicityStatus = Publisher.Status.VERIFIED, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
+                new Publisher { Id = 1, AppUserId = "a18be9c0-aa65-4af8-bd17-00bd9344e576", Name = "Nyabingi Studio", PublicityStatus = Publisher.Status.VERIFIED, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
             );
 
             // PaymentMethod seed data
@@ -209,8 +247,7 @@ namespace Bingi_Storage.Data
                 }
             );
 
-            var hasher = new PasswordHasher<AppUser>();
-
+            // Use static password hashes instead of dynamic generation
             const string ADMIN_USER_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e576";
             var adminUser = new AppUser
             {
@@ -220,23 +257,31 @@ namespace Bingi_Storage.Data
                 Email = "edwinnyaluogo@gmail.com",
                 NormalizedEmail = "EDWINNYALUOGO@GMAIL.COM",
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(null, "q1w2e3r4P+"),
+                // Static hash for password "q1w2e3r4P+"
+                PasswordHash = "AQAAAAIAAYagAAAAEOBV6cpmXcJxwJ+mw+fPg4x8aPgKHC9veTzthQGcdqeacsNMFOSjQf45M9Cf7rcNyw==",
                 SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
+                ConcurrencyStamp = "admin-concurrency-stamp-001", // Add static ConcurrencyStamp
                 IsAdmin = true,
-                IsSuperAdmin = true
+                IsSuperAdmin = true,
+                DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
             };
 
             const string USER1_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e577";
             var user1 = new AppUser
             {
                 Id = USER1_ID,
-                UserName = "user1@bingi.com",
-                NormalizedUserName = "USER1@BINGI.COM",
-                Email = "user1@bingi.com",
-                NormalizedEmail = "USER1@BINGI.COM",
+                UserName = "COMMANDER",
+                NormalizedUserName = "COMMANDER",
+                Email = "nyabingistudio@proton.me",
+                NormalizedEmail = "NYABINGISTUDIO@PROTON.ME",
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(null, "P@ssword1."),
-                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e577"
+                // Static hash for password "q1w2e3r4P+"
+                PasswordHash = "AQAAAAIAAYagAAAAELSOzm3DdIyV6qYy7JLce6I+HZAB4Wu9yip6c7K0xnl3WN4mTfuLFRk5DQKM764h2w==",
+                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
+                ConcurrencyStamp = "user1-concurrency-stamp-001", // Add static ConcurrencyStamp
+                DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
             };
 
             const string USER2_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e578";
@@ -248,8 +293,12 @@ namespace Bingi_Storage.Data
                 Email = "user2@bingi.com",
                 NormalizedEmail = "USER2@BINGI.COM",
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(null, "P@ssword1."),
-                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e578"
+                // Static hash for password "P@ssword1."
+                PasswordHash = "AQAAAAIAAYagAAAAEMI+8KKpvzMrq2MQ1WC+9BpylGx5Fqy/LXoucCCaLKeTQdkPRbKrUiNlxeQz766VrA==",
+                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
+                ConcurrencyStamp = "user2-concurrency-stamp-001", // Add static ConcurrencyStamp
+                DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
             };
 
             const string USER3_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e579";
@@ -261,11 +310,105 @@ namespace Bingi_Storage.Data
                 Email = "user3@bingi.com",
                 NormalizedEmail = "USER3@BINGI.COM",
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(null, "P@ssword1."),
-                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e579"
+                // Static hash for password "P@ssword1."
+                PasswordHash = "AQAAAAIAAYagAAAAENcM3j68sDaodsrHTXxTk3c2KWkafkWe3VEpDl0Ty1B9k76RUUTnU+oLhmEKkDR/Jg==",
+                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
+                ConcurrencyStamp = "user3-concurrency-stamp-001", // Add static ConcurrencyStamp
+                DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
             };
 
             modelBuilder.Entity<AppUser>().HasData(adminUser, user1, user2, user3);
+
+            // Seed UserProfile data 
+            modelBuilder.Entity<UserProfile>().HasData(
+                new UserProfile
+                {
+                    Id = 1,
+                    UserId = ADMIN_USER_ID,
+                    Bio = "Welcome to Alpha's profile!",
+                    Country = "Not specified",
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new UserProfile
+                {
+                    Id = 2,
+                    UserId = USER1_ID,
+                    Bio = "Welcome to COMMANDER's profile!",
+                    Country = "Not specified",
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new UserProfile
+                {
+                    Id = 3,
+                    UserId = USER2_ID,
+                    Bio = "Welcome to user2@bingi.com's profile!",
+                    Country = "Not specified",
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new UserProfile
+                {
+                    Id = 4,
+                    UserId = USER3_ID,
+                    Bio = "Welcome to user3@bingi.com's profile!",
+                    Country = "Not specified",
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                }
+            );
+
+            //seed a default wallet for each user
+            modelBuilder.Entity<UserWallet>().HasData(
+                new UserWallet
+                {
+                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), // Static Guid instead of int
+                    UserId = ADMIN_USER_ID,
+                    Name = "Alpha's Wallet",
+                    Balance = 1000.00m,
+                    Currency = "KES",
+                    WalletStatus = UserWallet.Status.ACTIVE,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new UserWallet
+                {
+                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), // Static Guid instead of int
+                    UserId = USER1_ID,
+                    Name = "COMMANDER's Wallet",
+                    Balance = 500.00m,
+                    Currency = "KES",
+                    WalletStatus = UserWallet.Status.ACTIVE,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new UserWallet
+                {
+                    Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), // Static Guid instead of int
+                    UserId = USER2_ID,
+                    Name = "Default Wallet",
+                    Balance = 500.00m,
+                    Currency = "KES",
+                    WalletStatus = UserWallet.Status.ACTIVE,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new UserWallet
+                {
+                    Id = Guid.Parse("44444444-4444-4444-4444-444444444444"), // Static Guid instead of int
+                    UserId = USER3_ID,
+                    Name = "Default Wallet",
+                    Balance = 500.00m,
+                    Currency = "KES",
+                    WalletStatus = UserWallet.Status.ACTIVE,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                }
+            );
+
+
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string>
@@ -294,36 +437,65 @@ namespace Bingi_Storage.Data
 
         public override int SaveChanges()
         {
-            var entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is Product && (e.State == EntityState.Added || e.State == EntityState.Modified));
-
-            foreach (var entry in entries)
-            {
-                if (entry.State == EntityState.Added)
-                {
-                    ((Product)entry.Entity).CreatedAt = DateTime.UtcNow;
-                }
-                ((Product)entry.Entity).UpdatedAt = DateTime.UtcNow;
-            }
-
+            UpdateTimestamps();
             return base.SaveChanges();
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            UpdateTimestamps();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void UpdateTimestamps()
+        {
             var entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is Product && (e.State == EntityState.Added || e.State == EntityState.Modified));
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
 
             foreach (var entry in entries)
             {
-                if (entry.State == EntityState.Added)
+                if (entry.Entity is Product product)
                 {
-                    ((Product)entry.Entity).CreatedAt = DateTime.UtcNow;
+                    if (entry.State == EntityState.Added)
+                    {
+                        product.CreatedAt = DateTime.UtcNow;
+                    }
+                    product.UpdatedAt = DateTime.UtcNow;
                 }
-                ((Product)entry.Entity).UpdatedAt = DateTime.UtcNow;
+                else if (entry.Entity is ProductPayload payload)
+                {
+                    if (entry.State == EntityState.Added)
+                    {
+                        payload.CreatedAt = DateTime.UtcNow;
+                    }
+                    payload.UpdatedAt = DateTime.UtcNow;
+                }
+                else if (entry.Entity is UserLibrary library)
+                {
+                    if (entry.State == EntityState.Added)
+                    {
+                        library.CreatedAt = DateTime.UtcNow;
+                    }
+                    library.UpdatedAt = DateTime.UtcNow;
+                }
+                else if (entry.Entity is UserProfile profile)
+                {
+                    if (entry.State == EntityState.Added)
+                    {
+                        profile.CreatedAt = DateTime.UtcNow;
+                    }
+                    profile.UpdatedAt = DateTime.UtcNow;
+                }
+                else if (entry.Entity is UserWallet wallet)
+                {
+                    if (entry.State == EntityState.Added)
+                    {
+                        wallet.CreatedAt = DateTime.UtcNow;
+                    }
+                    wallet.UpdatedAt = DateTime.UtcNow;
+                }
+                // Add other entities as needed
             }
-
-            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

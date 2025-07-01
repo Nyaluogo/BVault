@@ -18,6 +18,7 @@ namespace Bingi_Storage.ViewModels
             public string TargetPlatform { get; set; } // e.g., "Windows", "Linux", "MacOS"
             public bool IsDemo { get; set; }
         }
+        
         public struct PublisherInput
         {
             public int Id { get; set; }
@@ -49,7 +50,7 @@ namespace Bingi_Storage.ViewModels
         public int? AgeRestriction { get; set; }
         public ICollection<ProductMedia>? Media { get; set; } = new List<ProductMedia>();
         public ICollection<ProductPayload>? Payloads { get; set; } = new List<ProductPayload>();
-        public PublisherInput? Publisher { get; set; }
+        public PublisherInput? Publisher { get; set; } = new PublisherInput();
         public ICollection<ProductCategory>? Category { get; set; }
         public bool IsBettingEnabled { get; set; }
         public bool IsAIGen { get; set; } = false;

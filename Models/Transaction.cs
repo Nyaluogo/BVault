@@ -1,7 +1,11 @@
-﻿namespace Bingi_Storage.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Bingi_Storage.Models
 {
     public class Transaction
     {
+        [Key]
+
         public Guid Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }

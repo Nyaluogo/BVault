@@ -12,7 +12,7 @@ namespace Bingi_Storage.Models
 
         [Required]
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
         public string? PreviewImageUrl { get; set; }
         public string? VideoUrl { get; set; }

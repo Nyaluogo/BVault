@@ -1,6 +1,7 @@
 ﻿using Bingi_Storage.Data;
 using Bingi_Storage.Models;
 using Bingi_Storage.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,17 +17,20 @@ namespace Bingi_Storage.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ProductsController(ApplicationDbContext context, IWebHostEnvironment hostEnv)
+        public ProductsController(ApplicationDbContext context, IWebHostEnvironment hostEnv, UserManager<AppUser> userManager)
         {
             _context = context;
             _webHostEnvironment = hostEnv;
+            _userManager = userManager;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Product.ToListAsync());
+            var products = _context.Product.Include(p => p.Publisher);
+            return View(await products.ToListAsync());
         }
 
         // GET: Products/Details/5
@@ -36,10 +40,11 @@ namespace Bingi_Storage.Controllers
             {
                 return NotFound();
             }
-            
+
             var product = await _context.Product
+                .Include(p => p.Publisher)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            
+
 
             if (product == null)
             {
@@ -53,6 +58,7 @@ namespace Bingi_Storage.Controllers
         public IActionResult Create()
         {
             var viewModel = new ProductCreateViewModel();
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
             return View(viewModel);
         }
 
@@ -63,8 +69,17 @@ namespace Bingi_Storage.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel viewModel)
         {
+            Publisher publisher = new Publisher();
             if (ModelState.IsValid)
             {
+                // Get the currently authenticated user
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    // This case should be handled by an [Authorize] attribute on the action or controller
+                    return Challenge(); // Returns a 401 Unauthorized or 403 Forbidden
+                }
+
                 // Check if an image has been uploaded, validate, process, save, and get URL
                 if (Request.Form.Files != null && Request.Form.Files.Count > 0)
                 {
@@ -179,6 +194,39 @@ namespace Bingi_Storage.Controllers
                     });
                 }
 
+                var existing_publisher = await _context.Publishers
+                    .FirstOrDefaultAsync(p => p.AppUser == currentUser);
+
+
+                // Check if the publisher exists and if the current user owns it
+                if (existing_publisher == null)
+                {
+                    // If publisher does not exist, create a new one
+                    if (viewModel.Publisher == null || string.IsNullOrEmpty(viewModel.Publisher.Value.Name))
+                    {
+                        ModelState.AddModelError("Publisher.Name", "Publisher name is required.");
+                        ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
+                        return View(viewModel);
+                    }
+
+                    publisher = new Publisher
+                    {
+                        Name = viewModel.Publisher.Value.Name,
+                        Description = viewModel.Publisher.Value.Description,
+                        Email = viewModel.Publisher.Value.Email,
+                        Phone = viewModel.Publisher.Value.Phone,
+                        Country = viewModel.Publisher.Value.Country,
+                        RevenueShare = viewModel.Publisher.Value.RevenueShare,
+                        AppUserId = currentUser.Id, // Assign the current user's ID
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    _context.Publishers.Add(publisher); // Add the new publisher to the context
+                }
+                else
+                {
+                    publisher = existing_publisher;
+                }
 
                 // Map ViewModel to Product entity
                 var product = new Product
@@ -204,7 +252,7 @@ namespace Bingi_Storage.Controllers
                     PricingState = (Product.PricingStatus)viewModel.PricingState,
                     ProductPublishingStatus = (Product.PublishingStatus)viewModel.ProductPublishingStatus,
                     ReleaseDate = viewModel.ReleaseDate,
-                    // Set other properties as needed
+                    PublisherId = publisher.Id,
                     Payloads = productPayloads,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -215,6 +263,7 @@ namespace Bingi_Storage.Controllers
                 //redirect to edit page
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name", publisher.Id);
             return View(viewModel);
         }
 
@@ -231,6 +280,7 @@ namespace Bingi_Storage.Controllers
             {
                 return NotFound();
             }
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name", product.PublisherId);
             return View(product);
         }
 
@@ -239,7 +289,7 @@ namespace Bingi_Storage.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ShortDescription,Description,Price,FileSize,Version,ImageUrl,SystemRequirements,AgeRestriction,DownloadCount,AverageRating,TotalRatings,IsBettingEnabled,ProductPublishingStatus,ReleaseDate,SuspensionDate,DeleteDate,CreatedAt,UpdatedAt")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ShortDescription,Description,DefaultPrice,SalePrice,Discount,FileSize,Version,ImageUrl,SystemRequirements,AgeRestriction,DownloadCount,AverageRating,TotalRatings,IsBettingEnabled,ProductPublishingStatus,ReleaseDate,SuspensionDate,DeleteDate,CreatedAt,UpdatedAt,PublisherId")] Product product)
         {
             if (id != product.Id)
             {
@@ -266,6 +316,7 @@ namespace Bingi_Storage.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name", product.PublisherId);
             return View(product);
         }
 
@@ -278,6 +329,7 @@ namespace Bingi_Storage.Controllers
             }
 
             var product = await _context.Product
+                .Include(p => p.Publisher)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {

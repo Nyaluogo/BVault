@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Bingi_Storage.Data.Migrations
+namespace Bingi_Storage.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -21,6 +21,209 @@ namespace Bingi_Storage.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Bingi_Storage.Models.AppUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfLastLogin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfRegistration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmailVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPhoneVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublisher")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSuperAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("MyAccStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MyKycStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("OtherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "admin-concurrency-stamp-001",
+                            DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            Email = "edwinnyaluogo@gmail.com",
+                            EmailConfirmed = true,
+                            IsAdmin = true,
+                            IsEmailVerified = false,
+                            IsPhoneVerified = false,
+                            IsPublisher = false,
+                            IsSuperAdmin = true,
+                            LockoutEnabled = false,
+                            MyAccStatus = 0,
+                            MyKycStatus = 3,
+                            NormalizedEmail = "EDWINNYALUOGO@GMAIL.COM",
+                            NormalizedUserName = "ALPHA",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOBV6cpmXcJxwJ+mw+fPg4x8aPgKHC9veTzthQGcdqeacsNMFOSjQf45M9Cf7rcNyw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
+                            TwoFactorEnabled = false,
+                            UserName = "Alpha"
+                        },
+                        new
+                        {
+                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "user1-concurrency-stamp-001",
+                            DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            Email = "nyabingistudio@proton.me",
+                            EmailConfirmed = true,
+                            IsAdmin = false,
+                            IsEmailVerified = false,
+                            IsPhoneVerified = false,
+                            IsPublisher = false,
+                            IsSuperAdmin = false,
+                            LockoutEnabled = false,
+                            MyAccStatus = 0,
+                            MyKycStatus = 3,
+                            NormalizedEmail = "NYABINGISTUDIO@PROTON.ME",
+                            NormalizedUserName = "COMMANDER",
+                            PasswordHash = "AQAAAAIAAYagAAAAELSOzm3DdIyV6qYy7JLce6I+HZAB4Wu9yip6c7K0xnl3WN4mTfuLFRk5DQKM764h2w==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
+                            TwoFactorEnabled = false,
+                            UserName = "COMMANDER"
+                        },
+                        new
+                        {
+                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "user2-concurrency-stamp-001",
+                            DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            Email = "user2@bingi.com",
+                            EmailConfirmed = true,
+                            IsAdmin = false,
+                            IsEmailVerified = false,
+                            IsPhoneVerified = false,
+                            IsPublisher = false,
+                            IsSuperAdmin = false,
+                            LockoutEnabled = false,
+                            MyAccStatus = 0,
+                            MyKycStatus = 3,
+                            NormalizedEmail = "USER2@BINGI.COM",
+                            NormalizedUserName = "USER2@BINGI.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMI+8KKpvzMrq2MQ1WC+9BpylGx5Fqy/LXoucCCaLKeTQdkPRbKrUiNlxeQz766VrA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
+                            TwoFactorEnabled = false,
+                            UserName = "user2@bingi.com"
+                        },
+                        new
+                        {
+                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "user3-concurrency-stamp-001",
+                            DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            Email = "user3@bingi.com",
+                            EmailConfirmed = true,
+                            IsAdmin = false,
+                            IsEmailVerified = false,
+                            IsPhoneVerified = false,
+                            IsPublisher = false,
+                            IsSuperAdmin = false,
+                            LockoutEnabled = false,
+                            MyAccStatus = 0,
+                            MyKycStatus = 3,
+                            NormalizedEmail = "USER3@BINGI.COM",
+                            NormalizedUserName = "USER3@BINGI.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAENcM3j68sDaodsrHTXxTk3c2KWkafkWe3VEpDl0Ty1B9k76RUUTnU+oLhmEKkDR/Jg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
+                            TwoFactorEnabled = false,
+                            UserName = "user3@bingi.com"
+                        });
+                });
 
             modelBuilder.Entity("Bingi_Storage.Models.Bet", b =>
                 {
@@ -120,6 +323,23 @@ namespace Bingi_Storage.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BettingOdds");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Bundle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bundle");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Order", b =>
@@ -252,6 +472,23 @@ namespace Bingi_Storage.Data.Migrations
                     b.ToTable("PaymentMethods");
                 });
 
+            modelBuilder.Entity("Bingi_Storage.Models.Platform", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Platform");
+                });
+
             modelBuilder.Entity("Bingi_Storage.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -308,13 +545,16 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<bool>("IsBettingEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("ParentProductId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PricingState")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductPublishingStatus")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PublisherId")
+                    b.Property<int>("PublisherId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ReleaseDate")
@@ -353,6 +593,8 @@ namespace Bingi_Storage.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ParentProductId");
+
                     b.HasIndex("PublisherId");
 
                     b.ToTable("Product");
@@ -364,16 +606,15 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
+                            ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163014.png",
                             IsAIGen = false,
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting action game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -388,16 +629,15 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
+                            ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/SavageGearsOfficialPoster-1-scaled.jpg",
                             IsAIGen = false,
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting action game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -412,9 +652,7 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
                             ImageUrl = "https://example.com/sample-game.jpg",
@@ -422,6 +660,7 @@ namespace Bingi_Storage.Data.Migrations
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting action game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -436,9 +675,7 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
                             ImageUrl = "https://example.com/sample-game.jpg",
@@ -446,6 +683,7 @@ namespace Bingi_Storage.Data.Migrations
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting strategy game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -460,9 +698,7 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
                             ImageUrl = "https://example.com/sample-game.jpg",
@@ -470,6 +706,7 @@ namespace Bingi_Storage.Data.Migrations
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting racing game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -484,16 +721,15 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
+                            ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163208.png",
                             IsAIGen = false,
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting action game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -508,9 +744,7 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
                             ImageUrl = "https://example.com/sample-game.jpg",
@@ -518,6 +752,7 @@ namespace Bingi_Storage.Data.Migrations
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting action game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -532,9 +767,7 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
                             ImageUrl = "https://example.com/sample-game.jpg",
@@ -542,6 +775,7 @@ namespace Bingi_Storage.Data.Migrations
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting action game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -556,9 +790,7 @@ namespace Bingi_Storage.Data.Migrations
                             AgeRestriction = 18,
                             AverageRating = 4.5m,
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
                             Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
                             DownloadCount = 1000,
                             FileSize = 5.0m,
                             ImageUrl = "https://example.com/sample-game.jpg",
@@ -566,6 +798,7 @@ namespace Bingi_Storage.Data.Migrations
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
+                            PublisherId = 1,
                             SalePrice = 29.99m,
                             ShortDescription = "An exciting action game.",
                             SystemRequirements = "Windows 10 or higher",
@@ -775,6 +1008,31 @@ namespace Bingi_Storage.Data.Migrations
                     b.ToTable("ProductPayload");
                 });
 
+            modelBuilder.Entity("Bingi_Storage.Models.ProductPrice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductPrice");
+                });
+
             modelBuilder.Entity("Bingi_Storage.Models.Publisher", b =>
                 {
                     b.Property<int>("Id")
@@ -782,6 +1040,10 @@ namespace Bingi_Storage.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
@@ -816,14 +1078,18 @@ namespace Bingi_Storage.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
+
                     b.ToTable("Publishers");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            AppUserId = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
                             CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Name = "Default Publisher",
+                            Name = "Nyabingi Studio",
                             PublicityStatus = 1,
                             UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc)
                         });
@@ -837,24 +1103,34 @@ namespace Bingi_Storage.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Body")
+                    b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ReviewPublishingStatus")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReviewPublishingStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
                 });
@@ -915,8 +1191,15 @@ namespace Bingi_Storage.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -926,13 +1209,19 @@ namespace Bingi_Storage.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
+
                     b.ToTable("UserLibraries");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.UserProfile", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
@@ -946,9 +1235,54 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("UserProfiles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Bio = "Welcome to Alpha's profile!",
+                            Country = "Not specified",
+                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e576"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Bio = "Welcome to COMMANDER's profile!",
+                            Country = "Not specified",
+                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e577"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Bio = "Welcome to user2@bingi.com's profile!",
+                            Country = "Not specified",
+                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e578"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Bio = "Welcome to user3@bingi.com's profile!",
+                            Country = "Not specified",
+                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e579"
+                        });
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.UserWallet", b =>
@@ -958,6 +1292,7 @@ namespace Bingi_Storage.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Balance")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -986,6 +1321,52 @@ namespace Bingi_Storage.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserWallets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Balance = 1000.00m,
+                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            Currency = "KES",
+                            Name = "Alpha's Wallet",
+                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
+                            WalletStatus = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Balance = 500.00m,
+                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            Currency = "KES",
+                            Name = "COMMANDER's Wallet",
+                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
+                            WalletStatus = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            Balance = 500.00m,
+                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            Currency = "KES",
+                            Name = "Default Wallet",
+                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
+                            WalletStatus = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            Balance = 500.00m,
+                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            Currency = "KES",
+                            Name = "Default Wallet",
+                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
+                            WalletStatus = 0
+                        });
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Wishlist", b =>
@@ -1002,9 +1383,30 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Wishlists");
+                });
+
+            modelBuilder.Entity("BundleProduct", b =>
+                {
+                    b.Property<int>("BundlesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BundlesId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("BundleProduct");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1071,80 +1473,6 @@ namespace Bingi_Storage.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator().HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -1254,6 +1582,21 @@ namespace Bingi_Storage.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("PlatformProduct", b =>
+                {
+                    b.Property<int>("PlatformsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlatformsId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("PlatformProduct");
+                });
+
             modelBuilder.Entity("ProductProductCategory", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -1269,149 +1612,34 @@ namespace Bingi_Storage.Data.Migrations
                     b.ToTable("ProductProductCategory");
                 });
 
-            modelBuilder.Entity("Bingi_Storage.Models.AppUser", b =>
+            modelBuilder.Entity("ProductUserLibrary", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateOfLastLogin")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateOfRegistration")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEmailVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPhoneVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPublisher")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSuperAdmin")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MyAccStatus")
+                    b.Property<int>("ProductsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MyKycStatus")
+                    b.Property<int>("UserLibraryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("OtherName")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("ProductsId", "UserLibraryId");
 
-                    b.HasDiscriminator().HasValue("AppUser");
+                    b.HasIndex("UserLibraryId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "83f1174d-2992-419a-b240-0a096a2465cc",
-                            Email = "edwinnyaluogo@gmail.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "EDWINNYALUOGO@GMAIL.COM",
-                            NormalizedUserName = "ALPHA",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMG87dSyKDdRxdiZHpJt7OH2xaT/4KEfNeR2PSkLSzHyG6xiU56usSlF1fufuajo8g==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
-                            TwoFactorEnabled = false,
-                            UserName = "Alpha",
-                            DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsAdmin = true,
-                            IsEmailVerified = false,
-                            IsPhoneVerified = false,
-                            IsPublisher = false,
-                            IsSuperAdmin = true,
-                            MyAccStatus = 0,
-                            MyKycStatus = 3
-                        },
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "ded66a78-1ee6-43f2-9fd0-87cd3e250951",
-                            Email = "user1@bingi.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER1@BINGI.COM",
-                            NormalizedUserName = "USER1@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKWzNpB8//TGBW0JaC/n+/OxvIAGzJnwyosGF1NVnY+9drFJpmVw20aj955zzKkiJA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
-                            TwoFactorEnabled = false,
-                            UserName = "user1@bingi.com",
-                            DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsAdmin = false,
-                            IsEmailVerified = false,
-                            IsPhoneVerified = false,
-                            IsPublisher = false,
-                            IsSuperAdmin = false,
-                            MyAccStatus = 0,
-                            MyKycStatus = 3
-                        },
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "f12f8ac0-0be8-499c-bd70-a0a7369ae84d",
-                            Email = "user2@bingi.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER2@BINGI.COM",
-                            NormalizedUserName = "USER2@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOtBGqqlDOiuoMbBlwW2LVscIbYW4jAYNzWbfvT9j6Ycx1SXGB8crB6UfBwI9rZJ1w==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
-                            TwoFactorEnabled = false,
-                            UserName = "user2@bingi.com",
-                            DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsAdmin = false,
-                            IsEmailVerified = false,
-                            IsPhoneVerified = false,
-                            IsPublisher = false,
-                            IsSuperAdmin = false,
-                            MyAccStatus = 0,
-                            MyKycStatus = 3
-                        },
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "84f17889-5ac4-4283-bc54-9013242c82ff",
-                            Email = "user3@bingi.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER3@BINGI.COM",
-                            NormalizedUserName = "USER3@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM7MY3PQM5YaeEDzDOOtb9oSFpFp4UZXwE3LR8Zsvgbgk7Oig3EDgrGyN8zWQxYBjA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
-                            TwoFactorEnabled = false,
-                            UserName = "user3@bingi.com",
-                            DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsAdmin = false,
-                            IsEmailVerified = false,
-                            IsPhoneVerified = false,
-                            IsPublisher = false,
-                            IsSuperAdmin = false,
-                            MyAccStatus = 0,
-                            MyKycStatus = 3
-                        });
+                    b.ToTable("ProductUserLibrary");
+                });
+
+            modelBuilder.Entity("ProductWishlist", b =>
+                {
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WishlistId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductsId", "WishlistId");
+
+                    b.HasIndex("WishlistId");
+
+                    b.ToTable("ProductWishlist");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Bet", b =>
@@ -1493,10 +1721,17 @@ namespace Bingi_Storage.Data.Migrations
 
             modelBuilder.Entity("Bingi_Storage.Models.Product", b =>
                 {
+                    b.HasOne("Bingi_Storage.Models.Product", "ParentProduct")
+                        .WithMany("ChildProducts")
+                        .HasForeignKey("ParentProductId");
+
                     b.HasOne("Bingi_Storage.Models.Publisher", "Publisher")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("PublisherId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ParentProduct");
 
                     b.Navigation("Publisher");
                 });
@@ -1532,6 +1767,47 @@ namespace Bingi_Storage.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Bingi_Storage.Models.ProductPrice", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Product", "Product")
+                        .WithMany("Prices")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Publisher", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.AppUser", "AppUser")
+                        .WithOne("Publisher")
+                        .HasForeignKey("Bingi_Storage.Models.Publisher", "AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Review", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Bingi_Storage.Models.Transaction", b =>
                 {
                     b.HasOne("Bingi_Storage.Models.PaymentMethod", "PaymentMethod")
@@ -1558,11 +1834,22 @@ namespace Bingi_Storage.Data.Migrations
                     b.Navigation("Wallet");
                 });
 
+            modelBuilder.Entity("Bingi_Storage.Models.UserLibrary", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.AppUser", "AppUser")
+                        .WithOne("Library")
+                        .HasForeignKey("Bingi_Storage.Models.UserLibrary", "AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("Bingi_Storage.Models.UserProfile", b =>
                 {
                     b.HasOne("Bingi_Storage.Models.AppUser", "User")
                         .WithOne("Profile")
-                        .HasForeignKey("Bingi_Storage.Models.UserProfile", "Id")
+                        .HasForeignKey("Bingi_Storage.Models.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1580,6 +1867,32 @@ namespace Bingi_Storage.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Bingi_Storage.Models.Wishlist", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BundleProduct", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Bundle", null)
+                        .WithMany()
+                        .HasForeignKey("BundlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1591,7 +1904,7 @@ namespace Bingi_Storage.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Bingi_Storage.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1600,7 +1913,7 @@ namespace Bingi_Storage.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Bingi_Storage.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1615,7 +1928,7 @@ namespace Bingi_Storage.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Bingi_Storage.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1624,9 +1937,24 @@ namespace Bingi_Storage.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Bingi_Storage.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PlatformProduct", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Platform", null)
+                        .WithMany()
+                        .HasForeignKey("PlatformsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1646,6 +1974,48 @@ namespace Bingi_Storage.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProductUserLibrary", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.UserLibrary", null)
+                        .WithMany()
+                        .HasForeignKey("UserLibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProductWishlist", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.Wishlist", null)
+                        .WithMany()
+                        .HasForeignKey("WishlistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.AppUser", b =>
+                {
+                    b.Navigation("Library");
+
+                    b.Navigation("Profile")
+                        .IsRequired();
+
+                    b.Navigation("Publisher");
+
+                    b.Navigation("Wallets");
+                });
+
             modelBuilder.Entity("Bingi_Storage.Models.Order", b =>
                 {
                     b.Navigation("Items");
@@ -1653,22 +2023,25 @@ namespace Bingi_Storage.Data.Migrations
 
             modelBuilder.Entity("Bingi_Storage.Models.Product", b =>
                 {
+                    b.Navigation("ChildProducts");
+
                     b.Navigation("Media");
 
                     b.Navigation("Payloads");
+
+                    b.Navigation("Prices");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Publisher", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Transaction", b =>
                 {
                     b.Navigation("TransactionOrder");
-                });
-
-            modelBuilder.Entity("Bingi_Storage.Models.AppUser", b =>
-                {
-                    b.Navigation("Profile")
-                        .IsRequired();
-
-                    b.Navigation("Wallets");
                 });
 #pragma warning restore 612, 618
         }

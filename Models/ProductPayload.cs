@@ -24,7 +24,7 @@ namespace Bingi_Storage.Models
         public enum Type { BIN_WIN, BIN_LINUX, BIN_ANDROID, BIN_WEB, UNDEFINED }
         public Type _Type { get; set; } = ProductPayload.Type.UNDEFINED;
         public bool IsDemo { get; set; } = false;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
 }
