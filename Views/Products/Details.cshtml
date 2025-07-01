@@ -22,7 +22,11 @@
                     <button class="btn gold">Buy $@Model.SalePrice</button>
                     <button class="btn glass">Wishlist</button>
                     <button class="btn glass">Share</button>
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn glass">Edit</a>
+                    @if(User.Identity.IsAuthenticated == true && Model.Publisher?.AppUser == User.Identity)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn glass">Edit</a>
+                    }
+                    
                 </div>
             </div>
         </div>

@@ -55,12 +55,30 @@ namespace Bingi_Storage.Controllers
         }
 
         // GET: Products/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var user = await GetCurrentUser();
             var viewModel = new ProductCreateViewModel();
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
+            if (user != null)
+            {
+                viewModel._AppUser = user;
+                var publisher = await _context.Publishers
+                    .FirstOrDefaultAsync(p => p.AppUserId == user.Id);
+                if (publisher != null)
+                {
+                    viewModel._Publisher = publisher;
+                }
+            }
+
+            
             return View(viewModel);
         }
+
+        private async Task<AppUser?> GetCurrentUser()
+        {
+            return await _userManager.GetUserAsync(User);
+        }
+
 
         // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

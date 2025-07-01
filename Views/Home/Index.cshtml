@@ -31,7 +31,7 @@
                     }
                     <div class="game-tile-info">
                         <h5>@item.Title</h5>
-                        <p>Short description for Game @item.ShortDescription</p>
+                        <p>@item.ShortDescription</p>
                         <button class="btn btn-primary btn-sm" onclick="location.href='@Url.Action("Details", "Products", new { id = @item.Id })'">View</button>
                     </div>
                 </div>

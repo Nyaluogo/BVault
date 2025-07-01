@@ -199,6 +199,11 @@ namespace Bingi_Storage.Data
                 new ProductCategory { Id = 7, Name = "Software", IsActive = true, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
             );
 
+            // Publisher seed data
+            modelBuilder.Entity<Publisher>().HasData(
+                new Publisher { Id = 1, AppUserId = "a18be9c0-aa65-4af8-bd17-00bd9344e575", Name = "Nyabingi Studio", PublicityStatus = Publisher.Status.VERIFIED, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
+            );
+
             //Product seed data
             modelBuilder.Entity<Product>().HasData(
                 new Product { Id = 1, PublisherId = 1, Title = "BINGIMAN", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163014.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
@@ -212,10 +217,7 @@ namespace Bingi_Storage.Data
                 new Product { Id = 9, PublisherId = 1, Title = "Armed Rebellion", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
             );
 
-            // Publisher seed data
-            modelBuilder.Entity<Publisher>().HasData(
-                new Publisher { Id = 1, AppUserId = "a18be9c0-aa65-4af8-bd17-00bd9344e576", Name = "Nyabingi Studio", PublicityStatus = Publisher.Status.VERIFIED, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
-            );
+            
 
             // PaymentMethod seed data
             //modelBuilder.Entity<PaymentMethod>().HasData(

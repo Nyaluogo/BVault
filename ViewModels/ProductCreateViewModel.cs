@@ -5,6 +5,8 @@ namespace Bingi_Storage.ViewModels
 {
     public class ProductCreateViewModel
     {
+        public AppUser? _AppUser { get; set; }
+        public Publisher? _Publisher { get; set; }
         public struct ProductMedia
         {
             public string MediaType { get; set; } // e.g., "image", "video"
