@@ -4,6 +4,7 @@ using Bingi_Storage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bingi_Storage.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250630210629_RefreshMig1")]
+    partial class RefreshMig1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,37 @@ namespace Bingi_Storage.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Bingi_Storage.Models.AuditLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PerformedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLog");
+                });
 
             modelBuilder.Entity("Bingi_Storage.Models.Bet", b =>
                 {
@@ -120,6 +154,23 @@ namespace Bingi_Storage.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BettingOdds");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Bundle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bundle");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Order", b =>
@@ -252,6 +303,23 @@ namespace Bingi_Storage.Data.Migrations
                     b.ToTable("PaymentMethods");
                 });
 
+            modelBuilder.Entity("Bingi_Storage.Models.Platform", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Platform");
+                });
+
             modelBuilder.Entity("Bingi_Storage.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -308,13 +376,16 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<bool>("IsBettingEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("ParentProductId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PricingState")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductPublishingStatus")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PublisherId")
+                    b.Property<int>("PublisherId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ReleaseDate")
@@ -337,7 +408,7 @@ namespace Bingi_Storage.Data.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("TotalRatings")
                         .HasColumnType("int");
@@ -351,229 +422,24 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<string>("VideoTrailerUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("WishlistId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentProductId");
 
                     b.HasIndex("PublisherId");
 
-                    b.ToTable("Product");
+                    b.HasIndex("ReleaseDate")
+                        .HasDatabaseName("IX_Product_ReleaseDate");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting action game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "BINGIMAN",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting action game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "Savage Gears",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting action game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "BINGIMAN 3",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting strategy game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "Debe",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting racing game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "Political Rally",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting action game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "Nafas",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting action game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "Political Fighter",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        },
-                        new
-                        {
-                            Id = 8,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting action game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "Bingivision",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        },
-                        new
-                        {
-                            Id = 9,
-                            AgeRestriction = 18,
-                            AverageRating = 4.5m,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            DefaultPrice = 0.0m,
-                            Description = "This is a detailed description of the sample game.",
-                            Discount = 0.0m,
-                            DownloadCount = 1000,
-                            FileSize = 5.0m,
-                            ImageUrl = "https://example.com/sample-game.jpg",
-                            IsAIGen = false,
-                            IsBettingEnabled = false,
-                            PricingState = 2,
-                            ProductPublishingStatus = 0,
-                            SalePrice = 29.99m,
-                            ShortDescription = "An exciting action game.",
-                            SystemRequirements = "Windows 10 or higher",
-                            Title = "Armed Rebellion",
-                            TotalRatings = 200,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Version = 1.0m
-                        });
+                    b.HasIndex("Title")
+                        .HasDatabaseName("IX_Product_Title");
+
+                    b.HasIndex("WishlistId");
+
+                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.ProductCategory", b =>
@@ -730,6 +596,10 @@ namespace Bingi_Storage.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Checksum")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -765,6 +635,9 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Version")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("_Type")
                         .HasColumnType("int");
 
@@ -775,6 +648,31 @@ namespace Bingi_Storage.Data.Migrations
                     b.ToTable("ProductPayload");
                 });
 
+            modelBuilder.Entity("Bingi_Storage.Models.ProductPrice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductPrice");
+                });
+
             modelBuilder.Entity("Bingi_Storage.Models.Publisher", b =>
                 {
                     b.Property<int>("Id")
@@ -782,6 +680,10 @@ namespace Bingi_Storage.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
@@ -816,17 +718,10 @@ namespace Bingi_Storage.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Publishers");
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
-                            Name = "Default Publisher",
-                            PublicityStatus = 1,
-                            UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc)
-                        });
+                    b.ToTable("Publishers");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Review", b =>
@@ -837,24 +732,34 @@ namespace Bingi_Storage.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Body")
+                    b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ReviewPublishingStatus")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReviewPublishingStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
                 });
@@ -1002,9 +907,30 @@ namespace Bingi_Storage.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Wishlists");
+                });
+
+            modelBuilder.Entity("BundleProduct", b =>
+                {
+                    b.Property<int>("BundlesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BundlesId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("BundleProducts", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1032,20 +958,6 @@ namespace Bingi_Storage.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "ad376a8f-9eab-4bb9-9fca-30b01540f445",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1209,28 +1121,6 @@ namespace Bingi_Storage.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
-                            RoleId = "a18be9c0-aa65-4af8-bd17-00bd9344e575"
-                        },
-                        new
-                        {
-                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
-                            RoleId = "ad376a8f-9eab-4bb9-9fca-30b01540f445"
-                        },
-                        new
-                        {
-                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
-                            RoleId = "ad376a8f-9eab-4bb9-9fca-30b01540f445"
-                        },
-                        new
-                        {
-                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
-                            RoleId = "ad376a8f-9eab-4bb9-9fca-30b01540f445"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -1252,6 +1142,21 @@ namespace Bingi_Storage.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("PlatformProduct", b =>
+                {
+                    b.Property<int>("PlatformsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlatformsId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("ProductPlatforms", (string)null);
                 });
 
             modelBuilder.Entity("ProductProductCategory", b =>
@@ -1314,101 +1219,23 @@ namespace Bingi_Storage.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
+                            Id = "d290f1ee-6c54-4b01-90e6-d701748f0851",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "83f1174d-2992-419a-b240-0a096a2465cc",
-                            Email = "edwinnyaluogo@gmail.com",
+                            ConcurrencyStamp = "bf0d453f-5d6e-43d3-90f0-ae3c65e9f323",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "EDWINNYALUOGO@GMAIL.COM",
                             NormalizedUserName = "ALPHA",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMG87dSyKDdRxdiZHpJt7OH2xaT/4KEfNeR2PSkLSzHyG6xiU56usSlF1fufuajo8g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
+                            SecurityStamp = "a3f1c2d4-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
                             TwoFactorEnabled = false,
-                            UserName = "Alpha",
-                            DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfLastLogin = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
+                            DateOfRegistration = new DateTime(2025, 6, 26, 16, 46, 50, 0, DateTimeKind.Utc),
                             IsAdmin = true,
                             IsEmailVerified = false,
                             IsPhoneVerified = false,
                             IsPublisher = false,
                             IsSuperAdmin = true,
-                            MyAccStatus = 0,
-                            MyKycStatus = 3
-                        },
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "ded66a78-1ee6-43f2-9fd0-87cd3e250951",
-                            Email = "user1@bingi.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER1@BINGI.COM",
-                            NormalizedUserName = "USER1@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKWzNpB8//TGBW0JaC/n+/OxvIAGzJnwyosGF1NVnY+9drFJpmVw20aj955zzKkiJA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
-                            TwoFactorEnabled = false,
-                            UserName = "user1@bingi.com",
-                            DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsAdmin = false,
-                            IsEmailVerified = false,
-                            IsPhoneVerified = false,
-                            IsPublisher = false,
-                            IsSuperAdmin = false,
-                            MyAccStatus = 0,
-                            MyKycStatus = 3
-                        },
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "f12f8ac0-0be8-499c-bd70-a0a7369ae84d",
-                            Email = "user2@bingi.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER2@BINGI.COM",
-                            NormalizedUserName = "USER2@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOtBGqqlDOiuoMbBlwW2LVscIbYW4jAYNzWbfvT9j6Ycx1SXGB8crB6UfBwI9rZJ1w==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
-                            TwoFactorEnabled = false,
-                            UserName = "user2@bingi.com",
-                            DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsAdmin = false,
-                            IsEmailVerified = false,
-                            IsPhoneVerified = false,
-                            IsPublisher = false,
-                            IsSuperAdmin = false,
-                            MyAccStatus = 0,
-                            MyKycStatus = 3
-                        },
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "84f17889-5ac4-4283-bc54-9013242c82ff",
-                            Email = "user3@bingi.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER3@BINGI.COM",
-                            NormalizedUserName = "USER3@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM7MY3PQM5YaeEDzDOOtb9oSFpFp4UZXwE3LR8Zsvgbgk7Oig3EDgrGyN8zWQxYBjA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
-                            TwoFactorEnabled = false,
-                            UserName = "user3@bingi.com",
-                            DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsAdmin = false,
-                            IsEmailVerified = false,
-                            IsPhoneVerified = false,
-                            IsPublisher = false,
-                            IsSuperAdmin = false,
                             MyAccStatus = 0,
                             MyKycStatus = 3
                         });
@@ -1493,10 +1320,22 @@ namespace Bingi_Storage.Data.Migrations
 
             modelBuilder.Entity("Bingi_Storage.Models.Product", b =>
                 {
-                    b.HasOne("Bingi_Storage.Models.Publisher", "Publisher")
-                        .WithMany()
-                        .HasForeignKey("PublisherId")
+                    b.HasOne("Bingi_Storage.Models.Product", "ParentProduct")
+                        .WithMany("ChildProducts")
+                        .HasForeignKey("ParentProductId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Bingi_Storage.Models.Publisher", "Publisher")
+                        .WithMany("Products")
+                        .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.Wishlist", null)
+                        .WithMany("Products")
+                        .HasForeignKey("WishlistId");
+
+                    b.Navigation("ParentProduct");
 
                     b.Navigation("Publisher");
                 });
@@ -1530,6 +1369,47 @@ namespace Bingi_Storage.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.ProductPrice", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Product", "Product")
+                        .WithMany("Prices")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Publisher", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.AppUser", "AppUser")
+                        .WithOne("Publisher")
+                        .HasForeignKey("Bingi_Storage.Models.Publisher", "AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Review", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Transaction", b =>
@@ -1578,6 +1458,32 @@ namespace Bingi_Storage.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Wishlist", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BundleProduct", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Bundle", null)
+                        .WithMany()
+                        .HasForeignKey("BundlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1631,6 +1537,21 @@ namespace Bingi_Storage.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PlatformProduct", b =>
+                {
+                    b.HasOne("Bingi_Storage.Models.Platform", null)
+                        .WithMany()
+                        .HasForeignKey("PlatformsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bingi_Storage.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProductProductCategory", b =>
                 {
                     b.HasOne("Bingi_Storage.Models.ProductCategory", null)
@@ -1653,9 +1574,20 @@ namespace Bingi_Storage.Data.Migrations
 
             modelBuilder.Entity("Bingi_Storage.Models.Product", b =>
                 {
+                    b.Navigation("ChildProducts");
+
                     b.Navigation("Media");
 
                     b.Navigation("Payloads");
+
+                    b.Navigation("Prices");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("Bingi_Storage.Models.Publisher", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Transaction", b =>
@@ -1663,10 +1595,17 @@ namespace Bingi_Storage.Data.Migrations
                     b.Navigation("TransactionOrder");
                 });
 
+            modelBuilder.Entity("Bingi_Storage.Models.Wishlist", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("Bingi_Storage.Models.AppUser", b =>
                 {
                     b.Navigation("Profile")
                         .IsRequired();
+
+                    b.Navigation("Publisher");
 
                     b.Navigation("Wallets");
                 });

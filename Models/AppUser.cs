@@ -7,11 +7,9 @@ namespace Bingi_Storage.Models
         /// <summary>
         /// 
         /// </summary>
-        public string UserName { get; set; }
+        
         public string? FirstName { get; set; }
         public string? OtherName { get; set; }
-        public string PasswordHash { get; set; }
-        public string? PhoneNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public UserProfile Profile { get; set; }
         public ICollection<UserWallet> Wallets { get; set; }

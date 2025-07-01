@@ -4,6 +4,7 @@ using Bingi_Storage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bingi_Storage.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250630220213_UserSeedMig2")]
+    partial class UserSeedMig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1316,17 +1319,15 @@ namespace Bingi_Storage.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "83f1174d-2992-419a-b240-0a096a2465cc",
-                            Email = "edwinnyaluogo@gmail.com",
+                            ConcurrencyStamp = "c31c19c8-2468-4d33-afa5-9e2af4cb0643",
+                            Email = "admin@bingi.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "EDWINNYALUOGO@GMAIL.COM",
-                            NormalizedUserName = "ALPHA",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMG87dSyKDdRxdiZHpJt7OH2xaT/4KEfNeR2PSkLSzHyG6xiU56usSlF1fufuajo8g==",
+                            NormalizedEmail = "ADMIN@BINGI.COM",
+                            NormalizedUserName = "ADMIN@BINGI.COM",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
                             TwoFactorEnabled = false,
-                            UserName = "Alpha",
                             DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAdmin = true,
@@ -1341,17 +1342,15 @@ namespace Bingi_Storage.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ded66a78-1ee6-43f2-9fd0-87cd3e250951",
+                            ConcurrencyStamp = "3e94ec76-92b1-4d41-af62-2db3f0fb6e95",
                             Email = "user1@bingi.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1@BINGI.COM",
                             NormalizedUserName = "USER1@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKWzNpB8//TGBW0JaC/n+/OxvIAGzJnwyosGF1NVnY+9drFJpmVw20aj955zzKkiJA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
                             TwoFactorEnabled = false,
-                            UserName = "user1@bingi.com",
                             DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAdmin = false,
@@ -1366,17 +1365,15 @@ namespace Bingi_Storage.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f12f8ac0-0be8-499c-bd70-a0a7369ae84d",
+                            ConcurrencyStamp = "45781fe1-c822-4053-b54a-bf3a6cad9b87",
                             Email = "user2@bingi.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2@BINGI.COM",
                             NormalizedUserName = "USER2@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOtBGqqlDOiuoMbBlwW2LVscIbYW4jAYNzWbfvT9j6Ycx1SXGB8crB6UfBwI9rZJ1w==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
                             TwoFactorEnabled = false,
-                            UserName = "user2@bingi.com",
                             DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAdmin = false,
@@ -1391,17 +1388,15 @@ namespace Bingi_Storage.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "84f17889-5ac4-4283-bc54-9013242c82ff",
+                            ConcurrencyStamp = "0baf772c-81b1-477e-a5dc-b88a098c9a6c",
                             Email = "user3@bingi.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER3@BINGI.COM",
                             NormalizedUserName = "USER3@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM7MY3PQM5YaeEDzDOOtb9oSFpFp4UZXwE3LR8Zsvgbgk7Oig3EDgrGyN8zWQxYBjA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
                             TwoFactorEnabled = false,
-                            UserName = "user3@bingi.com",
                             DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAdmin = false,

@@ -4,6 +4,7 @@ using Bingi_Storage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bingi_Storage.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250630222709_UserSeedMig3")]
+    partial class UserSeedMig3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1316,17 +1319,15 @@ namespace Bingi_Storage.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "83f1174d-2992-419a-b240-0a096a2465cc",
+                            ConcurrencyStamp = "43d890c6-0321-444c-8c8d-d8d146ead484",
                             Email = "edwinnyaluogo@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "EDWINNYALUOGO@GMAIL.COM",
                             NormalizedUserName = "ALPHA",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMG87dSyKDdRxdiZHpJt7OH2xaT/4KEfNeR2PSkLSzHyG6xiU56usSlF1fufuajo8g==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
                             TwoFactorEnabled = false,
-                            UserName = "Alpha",
                             DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAdmin = true,
@@ -1341,17 +1342,15 @@ namespace Bingi_Storage.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ded66a78-1ee6-43f2-9fd0-87cd3e250951",
+                            ConcurrencyStamp = "761af644-fb1e-4e7e-9062-65697cde948f",
                             Email = "user1@bingi.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1@BINGI.COM",
                             NormalizedUserName = "USER1@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKWzNpB8//TGBW0JaC/n+/OxvIAGzJnwyosGF1NVnY+9drFJpmVw20aj955zzKkiJA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
                             TwoFactorEnabled = false,
-                            UserName = "user1@bingi.com",
                             DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAdmin = false,
@@ -1366,17 +1365,15 @@ namespace Bingi_Storage.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f12f8ac0-0be8-499c-bd70-a0a7369ae84d",
+                            ConcurrencyStamp = "f6c8c0e8-d726-4c3c-8da6-4646b71e8acc",
                             Email = "user2@bingi.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2@BINGI.COM",
                             NormalizedUserName = "USER2@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOtBGqqlDOiuoMbBlwW2LVscIbYW4jAYNzWbfvT9j6Ycx1SXGB8crB6UfBwI9rZJ1w==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e578",
                             TwoFactorEnabled = false,
-                            UserName = "user2@bingi.com",
                             DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAdmin = false,
@@ -1391,17 +1388,15 @@ namespace Bingi_Storage.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "84f17889-5ac4-4283-bc54-9013242c82ff",
+                            ConcurrencyStamp = "39ab3415-124f-4863-8990-5ac0d32e7c97",
                             Email = "user3@bingi.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER3@BINGI.COM",
                             NormalizedUserName = "USER3@BINGI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM7MY3PQM5YaeEDzDOOtb9oSFpFp4UZXwE3LR8Zsvgbgk7Oig3EDgrGyN8zWQxYBjA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e579",
                             TwoFactorEnabled = false,
-                            UserName = "user3@bingi.com",
                             DateOfLastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfRegistration = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAdmin = false,

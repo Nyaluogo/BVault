@@ -1,4 +1,5 @@
 ﻿using Bingi_Storage.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -144,6 +145,11 @@ namespace Bingi_Storage.Data
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
+
+          SeedUsers(modelBuilder);
+
+            var utcNow = new DateTime(2025, 7, 1, 10, 0, 0, DateTimeKind.Utc);
+
             // ProductCategory seed data
             modelBuilder.Entity<ProductCategory>().HasData(
                 new ProductCategory { Id = 1, Name = "Action", IsActive = true, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
@@ -157,12 +163,12 @@ namespace Bingi_Storage.Data
 
             //Product seed data
             modelBuilder.Entity<Product>().HasData(
-                new Product { Id = 1, Title = "BINGIMAN", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 2, Title = "Savage Gears", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 1, Title = "BINGIMAN", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163014.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 2, Title = "Savage Gears", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/SavageGearsOfficialPoster-1-scaled.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 3, Title = "BINGIMAN 3", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 4, Title = "Debe", ShortDescription = "An exciting strategy game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 5, Title = "Political Rally", ShortDescription = "An exciting racing game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 6, Title = "Nafas", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 6, Title = "Nafas", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163208.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 7, Title = "Political Fighter", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 8, Title = "Bingivision", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 9, Title = "Armed Rebellion", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = 0, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
@@ -180,6 +186,111 @@ namespace Bingi_Storage.Data
             //    new PaymentMethod { Id = 3, Name = "PayPal", PayType = PaymentMethod.Type.E_WALLET, TransProvider = PaymentMethod.Provider.PAYPAL, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
             //);
         }
+
+
+
+        public void SeedUsers(ModelBuilder modelBuilder)
+        {
+            const string ADMIN_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e575";
+            const string USER_ROLE_ID = "ad376a8f-9eab-4bb9-9fca-30b01540f445";
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = ADMIN_ROLE_ID,
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                },
+                new IdentityRole
+                {
+                    Id = USER_ROLE_ID,
+                    Name = "User",
+                    NormalizedName = "USER"
+                }
+            );
+
+            var hasher = new PasswordHasher<AppUser>();
+
+            const string ADMIN_USER_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e576";
+            var adminUser = new AppUser
+            {
+                Id = ADMIN_USER_ID,
+                UserName = "Alpha",
+                NormalizedUserName = "ALPHA",
+                Email = "edwinnyaluogo@gmail.com",
+                NormalizedEmail = "EDWINNYALUOGO@GMAIL.COM",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "q1w2e3r4P+"),
+                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
+                IsAdmin = true,
+                IsSuperAdmin = true
+            };
+
+            const string USER1_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e577";
+            var user1 = new AppUser
+            {
+                Id = USER1_ID,
+                UserName = "user1@bingi.com",
+                NormalizedUserName = "USER1@BINGI.COM",
+                Email = "user1@bingi.com",
+                NormalizedEmail = "USER1@BINGI.COM",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "P@ssword1."),
+                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e577"
+            };
+
+            const string USER2_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e578";
+            var user2 = new AppUser
+            {
+                Id = USER2_ID,
+                UserName = "user2@bingi.com",
+                NormalizedUserName = "USER2@BINGI.COM",
+                Email = "user2@bingi.com",
+                NormalizedEmail = "USER2@BINGI.COM",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "P@ssword1."),
+                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e578"
+            };
+
+            const string USER3_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e579";
+            var user3 = new AppUser
+            {
+                Id = USER3_ID,
+                UserName = "user3@bingi.com",
+                NormalizedUserName = "USER3@BINGI.COM",
+                Email = "user3@bingi.com",
+                NormalizedEmail = "USER3@BINGI.COM",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "P@ssword1."),
+                SecurityStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e579"
+            };
+
+            modelBuilder.Entity<AppUser>().HasData(adminUser, user1, user2, user3);
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    RoleId = ADMIN_ROLE_ID,
+                    UserId = ADMIN_USER_ID
+                },
+                new IdentityUserRole<string>
+                {
+                    RoleId = USER_ROLE_ID,
+                    UserId = USER1_ID
+                },
+                new IdentityUserRole<string>
+                {
+                    RoleId = USER_ROLE_ID,
+                    UserId = USER2_ID
+                },
+                new IdentityUserRole<string>
+                {
+                    RoleId = USER_ROLE_ID,
+                    UserId = USER3_ID
+                }
+            );
+        }
+
 
         public override int SaveChanges()
         {
