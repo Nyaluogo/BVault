@@ -28,6 +28,14 @@
             <a class="nav-link" href="#">Community</a>
         </div>
         <div class="navbar-right">
+            <ul>
+                <li class="nav-item">
+                    <a class="nav-link cart-icon" asp-controller="Cart" asp-action="Index">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-counter" class="cart-counter">0</span>
+                    </a>
+                </li>
+            </ul>
             @if (SignInManager.IsSignedIn(User))
             {
                 <a class="btn platinum montserrat" asp-controller="Products" asp-action="Create" style="margin-right:1rem;">

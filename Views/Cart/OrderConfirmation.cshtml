@@ -1,0 +1,73 @@
+﻿@model Order
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<div class="bingi-confirmation-page">
+    <section class="main-header glass dynamic-bg" style="margin-bottom:2rem;">
+        <div class="header-left">
+            <div class="game-info">
+                <h1 class="game-title gold montserrat">Order Confirmed!</h1>
+                <p class="short-desc">Thank you for your purchase</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="confirmation-container glass section">
+        <div class="confirmation-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+
+        <h2>Your order has been successfully placed</h2>
+        <p class="confirmation-message">
+            Thanks for your purchase! Your games are now in your library and ready to play.
+        </p>
+
+        <div class="order-details">
+            <div class="detail-row">
+                <span>Order Number:</span>
+                <span>#@Model.Id</span>
+            </div>
+            <div class="detail-row">
+                <span>Date:</span>
+                <span>@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</span>
+            </div>
+            <div class="detail-row">
+                <span>Payment Method:</span>
+                <span>Wallet</span>
+            </div>
+            <div class="detail-row">
+                <span>Amount:</span>
+                <span>$@Model.TotalAmount?.ToString("F2")</span>
+            </div>
+            <div class="detail-row">
+                <span>Status:</span>
+                <span class="status-completed">@Model.status</span>
+            </div>
+        </div>
+
+        <div class="next-steps mt-4">
+            <h4>What's Next?</h4>
+            <div class="next-steps-grid">
+                <div class="next-step">
+                    <i class="fas fa-gamepad"></i>
+                    <h5>Play Your Games</h5>
+                    <p>Your games are ready to play in your library</p>
+                    <a asp-controller="Library" asp-action="Index" class="btn gold">Go to Library</a>
+                </div>
+                <div class="next-step">
+                    <i class="fas fa-download"></i>
+                    <h5>Download</h5>
+                    <p>Download your games on your devices</p>
+                    <a asp-controller="Downloads" asp-action="Index" class="btn glass">Downloads</a>
+                </div>
+                <div class="next-step">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h5>Continue Shopping</h5>
+                    <p>Browse more games in our store</p>
+                    <a asp-controller="Home" asp-action="Index" class="btn glass">Browse Store</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

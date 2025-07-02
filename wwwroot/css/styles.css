@@ -241,18 +241,27 @@ main.container.flex-grow-1 {
     margin-right: 0.5rem;
 }
 
-    .btn.gold {
-        background: linear-gradient(90deg, #ffd700 60%, #fffbe6 100%);
-        color: #101014;
-        font-weight: 700;
-    }
+.btn.gold {
+    background: linear-gradient(90deg, #ffd700 60%, #fffbe6 100%);
+    color: #000000;
+    font-weight: 700;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    border: 1px solid #e6c200;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
 
-    .btn.glass, .btn-link {
-        background: rgba(255,255,255,0.08);
-        color: #ffd700;
-        border: 1px solid #ffd70044;
-        backdrop-filter: blur(8px);
-    }
+.btn.gold:hover {
+    background: linear-gradient(90deg, #ffdf33 60%, #fff 100%);
+    color: #000000;
+    
+}
+
+.btn.glass, .btn-link {
+    background: rgba(255,255,255,0.08);
+    color: #ffd700;
+    border: 1px solid #ffd70044;
+    backdrop-filter: blur(8px);
+}
 
 .btn-link {
     background: none;
@@ -424,6 +433,7 @@ main.container.flex-grow-1 {
     display: flex;
     align-items: center;
     gap: 1rem;
+    width: 100%;
 }
 
 .carousel-track {
@@ -432,7 +442,8 @@ main.container.flex-grow-1 {
     overflow-x: auto;
     scroll-behavior: smooth;
     width: 100%;
-    max-width: 600px;
+    /*max-width: 600px;*/
+    padding: 0.5rem 0;
 }
 
     .carousel-track img {
@@ -442,6 +453,7 @@ main.container.flex-grow-1 {
         object-fit: cover;
         background: #222;
         box-shadow: 0 2px 8px #0004;
+        flex-shrink: 0;
     }
 
 .carousel-btn {

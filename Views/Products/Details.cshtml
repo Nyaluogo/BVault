@@ -19,7 +19,17 @@
                 </div>
                 <p class="short-desc">@Model.ShortDescription</p>
                 <div class="actions">
-                    <button class="btn gold">Buy $@Model.SalePrice</button>
+                    <button class="btn glass">Play Game</button>
+                    
+                    @* buy button *@
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                        <button type="submit" class="btn glass">
+                            Buy $@Model.SalePrice
+                        </button>
+                    </form>
+
                     <button class="btn glass">Wishlist</button>
                     <button class="btn glass">Share</button>
                     @if(User.Identity.IsAuthenticated == true && Model.Publisher?.AppUser == User.Identity)

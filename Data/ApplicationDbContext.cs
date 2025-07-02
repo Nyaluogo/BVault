@@ -33,6 +33,8 @@ namespace Bingi_Storage.Data
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserWallet> UserWallets { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -154,6 +156,20 @@ namespace Bingi_Storage.Data
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // ShoppingCart <-> CartItem (1:many)
+            modelBuilder.Entity<ShoppingCart>()
+                .HasMany(c => c.Items)
+                .WithOne(i => i.Cart)
+                .HasForeignKey(i => i.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // CartItem <-> Product (many:1)
+            modelBuilder.Entity<CartItem>()
+                .HasOne(i => i.Product)
+                .WithMany()
+                .HasForeignKey(i => i.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Bet <-> AppUser (many:1)
             modelBuilder.Entity<Bet>()
                 .HasOne(b => b.User)
@@ -201,7 +217,15 @@ namespace Bingi_Storage.Data
 
             // Publisher seed data
             modelBuilder.Entity<Publisher>().HasData(
-                new Publisher { Id = 1, AppUserId = "a18be9c0-aa65-4af8-bd17-00bd9344e575", Name = "Nyabingi Studio", PublicityStatus = Publisher.Status.VERIFIED, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
+                new Publisher
+                {
+                    Id = 1,
+                    AppUserId = "a18be9c0-aa65-4af8-bd17-00bd9344e576", // Match with ADMIN_USER_ID
+                    Name = "Nyabingi Studio",
+                    PublicityStatus = Publisher.Status.VERIFIED,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                }
             );
 
             //Product seed data

@@ -119,3 +119,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// Update cart counter
+function updateCartCounter() {
+    fetch('/Cart/GetCartCount')
+        .then(response => response.json())
+        .then(data => {
+            const counter = document.getElementById('cart-counter');
+            if (counter) {
+                counter.textContent = data.count;
+                if (data.count > 0) {
+                    counter.classList.add('has-items');
+                } else {
+                    counter.classList.remove('has-items');
+                }
+            }
+        });
+}
+
+// Update cart counter on page load
+document.addEventListener('DOMContentLoaded', function () {
+    updateCartCounter();
+});

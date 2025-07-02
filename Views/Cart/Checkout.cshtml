@@ -1,0 +1,175 @@
+﻿@using Bingi_Storage.ViewModels
+@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="bingi-checkout-page">
+    <section class="main-header glass dynamic-bg" style="margin-bottom:2rem;">
+        <div class="header-left">
+            <div class="game-info">
+                <h1 class="game-title gold montserrat">Checkout</h1>
+                <p class="short-desc">Complete your purchase</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="checkout-container">
+        <div class="checkout-form glass section">
+            <form asp-action="CompleteCheckout" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <h3 class="gold montserrat">Payment Method</h3>
+
+                @if (!Model.Wallets.Any())
+                {
+                    <div class="alert alert-warning">
+                        You don't have any wallets. Please add a wallet to continue.
+                    </div>
+                    <a asp-controller="Wallet" asp-action="Create" class="btn gold">Add Wallet</a>
+                }
+                else
+                {
+                    <div class="form-group mb-4">
+                        <label>Select Wallet</label>
+                        <select asp-for="SelectedWalletId" class="form-select glass-input">
+                            @foreach (var wallet in Model.Wallets)
+                            {
+                                <option value="@wallet.Id">@wallet.Name - Balance: $@wallet.Balance.ToString("F2") @wallet.Currency</option>
+                            }
+                        </select>
+                        <span asp-validation-for="SelectedWalletId" class="text-danger"></span>
+                    </div>
+
+                    <div class="wallet-balance-warning @(Model.Cart.Total > Model.Wallets.Max(w => w.Balance) ? "d-block" : "d-none")">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Insufficient funds in your wallet. Please add funds or select another payment method.
+                        </div>
+                    </div>
+
+                    <h3 class="gold montserrat mt-4">Order Review</h3>
+
+                    <div class="order-items">
+                        @foreach (var item in Model.Cart.Items)
+                        {
+                            <div class="order-item">
+                                <div class="item-image">
+                                    <img src="@item.Product.ImageUrl" alt="@item.Product.Title" width="80" />
+                                </div>
+                                <div class="item-info">
+                                    <h5>@item.Product.Title</h5>
+                                    <p class="text-muted">@item.Product.Publisher?.Name</p>
+                                </div>
+                                <div class="item-price">
+                                    $@item.UnitPrice.ToString("F2")
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="order-summary mt-4">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>$@Model.Cart.Subtotal.ToString("F2")</span>
+                        </div>
+                        @if (Model.Cart.Discount > 0)
+                        {
+                            <div class="summary-row discount">
+                                <span>Discount</span>
+                                <span>-$@Model.Cart.Discount.ToString("F2")</span>
+                            </div>
+                        }
+                        @if (Model.Cart.Tax > 0)
+                        {
+                            <div class="summary-row">
+                                <span>Tax</span>
+                                <span>$@Model.Cart.Tax.ToString("F2")</span>
+                            </div>
+                        }
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span>$@Model.Cart.Total.ToString("F2")</span>
+                        </div>
+                    </div>
+
+                    <div class="checkout-actions mt-4">
+                        <a asp-action="Index" class="btn glass">Back to Cart</a>
+                        <button type="submit" class="btn gold">Complete Purchase</button>
+                    </div>
+                }
+            </form>
+        </div>
+
+        <div class="checkout-sidebar glass section">
+            <h3 class="gold montserrat">Order Summary</h3>
+            <div class="summary-row">
+                <span>Items (@Model.Cart.Items.Count)</span>
+                <span>$@Model.Cart.Subtotal.ToString("F2")</span>
+            </div>
+            @if (Model.Cart.Discount > 0)
+            {
+                <div class="summary-row discount">
+                    <span>Discount</span>
+                    <span>-$@Model.Cart.Discount.ToString("F2")</span>
+                </div>
+            }
+            @if (Model.Cart.Tax > 0)
+            {
+                <div class="summary-row">
+                    <span>Tax</span>
+                    <span>$@Model.Cart.Tax.ToString("F2")</span>
+                </div>
+            }
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>$@Model.Cart.Total.ToString("F2")</span>
+            </div>
+
+            <div class="security-info mt-4">
+                <div class="security-item">
+                    <i class="fas fa-lock"></i>
+                    <span>Secure payment</span>
+                </div>
+                <div class="security-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy protected</span>
+                </div>
+                <div class="security-item">
+                    <i class="fas fa-download"></i>
+                    <span>Instant download after purchase</span>
+                </div>
+            </div>
+
+            <div class="need-help mt-4">
+                <h5>Need Help?</h5>
+                <a href="#" class="help-link">
+                    <i class="fas fa-question-circle"></i>
+                    Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            $('#SelectedWalletId').change(function() {
+                const walletId = $(this).val();
+                const walletBalance = parseFloat($(this).find(':selected').text().match(/Balance: \$([0-9.]+)/)[1]);
+                const orderTotal = @Model.Cart.Total;
+
+                if (walletBalance < orderTotal) {
+                    $('.wallet-balance-warning').addClass('d-block').removeClass('d-none');
+                } else {
+                    $('.wallet-balance-warning').addClass('d-none').removeClass('d-block');
+                }
+            });
+        });
+    </script>
+}

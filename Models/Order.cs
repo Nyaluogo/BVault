@@ -11,7 +11,7 @@
         public decimal? TotalAmount { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public Transaction? OrderTransaction { get; set; }
-        public enum Status { PENDING, COMPLETED, CANCELLED, REFUNDED}
+        public enum Status { PENDING, PROCESSING, COMPLETED, CANCELLED, REFUNDED}
         public Status status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
