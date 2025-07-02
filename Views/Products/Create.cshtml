@@ -1,9 +1,17 @@
 ﻿@model Bingi_Storage.ViewModels.ProductCreateViewModel
 @{
     ViewData["Title"] = "Create";
-    
+
 }
 <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+
+@if (TempData["ValidationErrors"] != null)
+{
+    <div class="alert alert-danger">
+        <h4>Validation Errors (Debug):</h4>
+        <p>@TempData["ValidationErrors"]</p>
+    </div>
+}
 
 <div class="bingi-product-page">
     <section class="main-header glass dynamic-bg" style="margin-bottom:2rem;">
@@ -26,17 +34,17 @@
                     <div class="form-group mb-3">
                         <label asp-for="Title" class="form-label"></label>
                         <input asp-for="Title" class="form-control glass-input" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
+                        <span asp-validation-for="Title" class="text-danger d-block mt-1"></span>
                     </div>
                     <div class="form-group mb-3">
                         <label asp-for="CustomUrl" class="form-label">Custom URL</label>
                         <input asp-for="CustomUrl" class="form-control glass-input" />
-                        <span asp-validation-for="CustomUrl" class="text-danger"></span>
+                        <span asp-validation-for="CustomUrl" class="text-danger d-block mt-1"></span>
                     </div>
                     <div class="form-group mb-3">
                         <label asp-for="ShortDescription" class="form-label"></label>
                         <input asp-for="ShortDescription" class="form-control glass-input" />
-                        <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                        <span asp-validation-for="ShortDescription" class="text-danger d-block mt-1"></span>
                     </div>
                 </div>
                 <div class="col-md-5">
@@ -44,48 +52,67 @@
                         <label class="form-label">Upload Logo <span class="form-guideline">(min 315x250)</span></label>
                         <div id="logo-upload-box" class="upload-box" tabindex="0" style="cursor:pointer;">Upload Logo</div>
                         <input type="file" id="ImageFile" name="ImageFile" accept="image/*" style="display:none;" />
+                        <span id="image-file-error" class="text-danger d-block mt-1" style="display:none;"></span>
                     </div>
-                    
+
                     <div class="form-group mb-3">
                         <label class="form-label">Video Trailer</label>
                         <input asp-for="VideoTrailerUrl" class="form-control glass-input" placeholder="YouTube or direct video URL" />
+                        <span asp-validation-for="VideoTrailerUrl" class="text-danger d-block mt-1"></span>
                     </div>
                     <div class="form-group mb-3">
                         <label asp-for="ReleaseDate" class="form-label"></label>
-                        <input asp-for="ReleaseDate" class="form-control glass-input" />
+                        <input asp-for="ReleaseDate" class="form-control glass-input" type="date" />
+                        <span asp-validation-for="ReleaseDate" class="text-danger d-block mt-1"></span>
                     </div>
-                    
+
                 </div>
             </div>
         </section>
 
+
         <!-- Publisher -->
         <section class="form-section">
             <h2 class="gold montserrat">Publisher</h2>
-            
+
             <div class="row">
                 <div class="form-group mb-3">
                     @if (Model._Publisher == null)
                     {
                         <div class="form-group mb-3">
-                            <label asp-for="@Model.Publisher.Value.Name" class="form-label">Publisher Name</label>
-                            <input asp-for="@Model.Publisher.Value.Name" class="form-control glass-input" placeholder="Publisher's Name" />
+                            <label asp-for="@Model.Publisher.Name" class="form-label">Publisher Name</label>
+                            <input asp-for="@Model.Publisher.Name" class="form-control glass-input" placeholder="Publisher's Name" />
+                            <span asp-validation-for="@Model.Publisher.Name" class="text-danger d-block mt-1"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.Publisher.Email" class="form-label">Publisher Email</label>
+                            <input asp-for="@Model.Publisher.Email" class="form-control glass-input" placeholder="Publisher's Email" type="email" />
+                            <span asp-validation-for="@Model.Publisher.Email" class="text-danger d-block mt-1"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.Publisher.Phone" class="form-label">Publisher Phone</label>
+                            <input asp-for="@Model.Publisher.Phone" class="form-control glass-input" placeholder="Publisher's Phone" />
+                            <span asp-validation-for="@Model.Publisher.Phone" class="text-danger d-block mt-1"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.Publisher.Country" class="form-label">Publisher Country</label>
+                            <input asp-for="@Model.Publisher.Country" class="form-control glass-input" placeholder="Publisher's Country" />
+                            <span asp-validation-for="@Model.Publisher.Country" class="text-danger d-block mt-1"></span>
                         </div>
                     }
                     else
                     {
                         <div class="form-group mb-3">
-                            <label asp-for="@Model.Publisher.Value.Name" class="form-label">Publisher Name</label>
-                            <input asp-for="@Model.Publisher.Value.Name" class="form-control glass-input" value="@Model._Publisher.Name" />
+                            <label asp-for="@Model.Publisher.Name" class="form-label">Publisher Name</label>
+                            <input asp-for="@Model.Publisher.Name" class="form-control glass-input" value="@Model._Publisher.Name" />
+                            <span asp-validation-for="@Model.Publisher.Name" class="text-danger d-block mt-1"></span>
                         </div>
                     }
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="ReleaseDate" class="form-label"></label>
-                    <input asp-for="ReleaseDate" class="form-control glass-input" />
-                </div>
+
             </div>
         </section>
+
 
         <!-- Pricing -->
         <section class="form-section">
@@ -97,15 +124,23 @@
                     <label class="me-3"><input type="radio" asp-for="PricingState" value="PAID" /> Paid</label>
                     <label><input type="radio" asp-for="PricingState" value="FREE" /> Free</label>
                 </div>
+                <span asp-validation-for="PricingState" class="text-danger d-block mt-1"></span>
             </div>
             <div class="row">
                 <div class="col-md-4 form-group mb-3">
                     <label asp-for="DefaultPrice" class="form-label">Default Price</label>
-                    <input asp-for="DefaultPrice" class="form-control glass-input" />
+                    <input asp-for="DefaultPrice" class="form-control glass-input" type="number" step="0.01" min="0" />
+                    <span asp-validation-for="DefaultPrice" class="text-danger d-block mt-1"></span>
                 </div>
                 <div class="col-md-4 form-group mb-3">
                     <label asp-for="Discount" class="form-label"></label>
-                    <input asp-for="Discount" class="form-control glass-input" />
+                    <input asp-for="Discount" class="form-control glass-input" type="number" step="0.01" min="0" max="100" />
+                    <span asp-validation-for="Discount" class="text-danger d-block mt-1"></span>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                    <label asp-for="SalePrice" class="form-label">Sale Price</label>
+                    <input asp-for="SalePrice" class="form-control glass-input" type="number" step="0.01" min="0" />
+                    <span asp-validation-for="SalePrice" class="text-danger d-block mt-1"></span>
                 </div>
             </div>
         </section>
@@ -120,6 +155,7 @@
                 <span id="payload-upload-text">Drop files here to upload</span>
                 <input type="file" id="PayloadFileInput" name="PayloadFileInput" multiple accept=".zip,.rar,.iso,.apk" style="display:none;" />
             </div>
+            <span id="payload-upload-error" class="text-danger d-block mt-1" style="display:none;"></span>
             <div id="payload-progress-container" style="display:none; margin-top: 10px;">
                 <div style="background:#eee; border-radius:4px; overflow:hidden;">
                     <div id="payload-progress-bar" style="height:8px; width:0; background:#ffd700;"></div>
@@ -135,7 +171,38 @@
                 </div>
             </div>
         </section>
-        
+
+        <!-- Additional Product Info -->
+        <section class="form-section">
+            <h2 class="gold montserrat">Additional Information</h2>
+            <div class="row">
+                <div class="col-md-6 form-group mb-3">
+                    <label asp-for="Version" class="form-label">Version</label>
+                    <input asp-for="Version" class="form-control glass-input" type="number" step="0.1" min="0" placeholder="e.g., 1.0" />
+                    <span asp-validation-for="Version" class="text-danger d-block mt-1"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                    <label asp-for="AgeRestriction" class="form-label">Age Restriction</label>
+                    <input asp-for="AgeRestriction" class="form-control glass-input" type="number" min="0" max="21" placeholder="e.g., 18" />
+                    <span asp-validation-for="AgeRestriction" class="text-danger d-block mt-1"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Tags" class="form-label">Tags</label>
+                <input asp-for="Tags" class="form-control glass-input" placeholder="Add tags separated by commas" />
+                <span asp-validation-for="Tags" class="text-danger d-block mt-1"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Genre" class="form-label">Genre</label>
+                <input asp-for="Genre" class="form-control glass-input" placeholder="e.g., Action, Adventure, RPG" />
+                <span asp-validation-for="Genre" class="text-danger d-block mt-1"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="SystemRequirements" class="form-label">System Requirements</label>
+                <textarea asp-for="SystemRequirements" class="form-control glass-input" rows="4" placeholder="Minimum and recommended system requirements"></textarea>
+                <span asp-validation-for="SystemRequirements" class="text-danger d-block mt-1"></span>
+            </div>
+        </section>
 
         <!-- Details -->
         <section class="form-section">
@@ -144,17 +211,42 @@
                 <label asp-for="Description" class="form-label"></label>
                 <div id="editor-container" style="background: rgba(255, 255, 255, 0.05); border-radius: 4px; margin-bottom: 10px;"></div>
                 <textarea asp-for="Description" id="description-editor" style="display: none;"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <span asp-validation-for="Description" class="text-danger d-block mt-1"></span>
             </div>
             <div class="form-group mb-3">
                 <label asp-for="ExternalLinks" class="form-label">External Links</label>
                 <input asp-for="ExternalLinks" class="form-control glass-input" placeholder="Add links separated by commas" />
+                <span asp-validation-for="ExternalLinks" class="text-danger d-block mt-1"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Documentation" class="form-label">Documentation</label>
+                <textarea asp-for="Documentation" class="form-control glass-input" rows="3" placeholder="Link to documentation or brief instructions"></textarea>
+                <span asp-validation-for="Documentation" class="text-danger d-block mt-1"></span>
+            </div>
+        </section>
+
+        <!-- Product Options -->
+        <section class="form-section">
+            <h2 class="gold montserrat">Product Options</h2>
+            <div class="form-group mb-3">
+                <div class="form-check">
+                    <input asp-for="IsBettingEnabled" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsBettingEnabled" class="form-check-label">Enable Betting Features</label>
+                </div>
+                <span asp-validation-for="IsBettingEnabled" class="text-danger d-block mt-1"></span>
+            </div>
+            <div class="form-group mb-3">
+                <div class="form-check">
+                    <input asp-for="IsAIGen" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsAIGen" class="form-check-label">AI Generated Content</label>
+                </div>
+                <span asp-validation-for="IsAIGen" class="text-danger d-block mt-1"></span>
             </div>
         </section>
 
         <div class="d-flex justify-content-between">
             <a asp-action="Index" class="btn glass montserrat">Back</a>
-            <button type="submit" class="btn gold montserrat" style="font-weight:600; min-width:120px;">Save</button>
+            <button type="submit" class="btn gold montserrat" style="font-weight:600; min-width:120px;">Create Project</button>
         </div>
     </form>
 </div>
@@ -162,6 +254,27 @@
 @section Scripts {
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
+        // --- Form Validation Enhancement ---
+        function showFieldError(fieldId, message) {
+            const errorSpan = document.querySelector(`span[data-valmsg-for="${fieldId}"]`) ||
+                             document.querySelector(`#${fieldId}-error`) ||
+                             document.querySelector(`input[name="${fieldId}"]`)?.nextElementSibling;
+            if (errorSpan && errorSpan.classList.contains('text-danger')) {
+                errorSpan.textContent = message;
+                errorSpan.style.display = 'block';
+            }
+        }
+
+        function clearFieldError(fieldId) {
+            const errorSpan = document.querySelector(`span[data-valmsg-for="${fieldId}"]`) ||
+                             document.querySelector(`#${fieldId}-error`) ||
+                             document.querySelector(`input[name="${fieldId}"]`)?.nextElementSibling;
+            if (errorSpan && errorSpan.classList.contains('text-danger')) {
+                errorSpan.textContent = '';
+                errorSpan.style.display = 'none';
+            }
+        }
+
         // --- Upload Box Logic ---
         const uploadBox = document.getElementById('payload-upload-box');
         const fileInput = document.getElementById('PayloadFileInput');
@@ -170,6 +283,7 @@
         const errorBox = document.getElementById('payload-error');
         const uploadedList = document.getElementById('uploaded-payloads-list');
         const uploadText = document.getElementById('payload-upload-text');
+        const uploadErrorSpan = document.getElementById('payload-upload-error');
 
         // Store uploaded payloads in memory for demo (replace with server-side in production)
         let uploadedPayloads = [];
@@ -230,6 +344,7 @@
 
         function handleFiles(files) {
             errorBox.style.display = 'none';
+            uploadErrorSpan.style.display = 'none';
             for (let file of files) {
                 if (!/\.(zip|rar|iso|apk)$/i.test(file.name)) {
                     showError('Invalid file type: ' + file.name);
@@ -246,6 +361,8 @@
         function showError(msg) {
             errorBox.textContent = msg;
             errorBox.style.display = 'block';
+            uploadErrorSpan.textContent = msg;
+            uploadErrorSpan.style.display = 'block';
         }
 
         function uploadFile(file) {
@@ -279,10 +396,33 @@
             }, 200);
         }
 
+        // Logo upload handling
+        const logoUploadBox = document.getElementById('logo-upload-box');
+        const logoFileInput = document.getElementById('ImageFile');
+        const logoErrorSpan = document.getElementById('image-file-error');
+
+        logoUploadBox.addEventListener('click', () => logoFileInput.click());
+        logoFileInput.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    logoErrorSpan.textContent = 'Please select a valid image file.';
+                    logoErrorSpan.style.display = 'block';
+                    return;
+                }
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    logoErrorSpan.textContent = 'Image file size must be less than 10MB.';
+                    logoErrorSpan.style.display = 'block';
+                    return;
+                }
+                logoErrorSpan.style.display = 'none';
+                logoUploadBox.textContent = `Selected: ${file.name}`;
+            }
+        });
+
         // Initial render
         renderPayloads();
     </script>
-
 
     <script>
         // Initialize Quill editor
@@ -323,6 +463,10 @@
             .ql-editor {
                 min-height: 200px;
                 color: #fff !important;
+            }
+            .text-danger {
+                font-size: 0.875rem;
+                margin-top: 0.25rem;
             }
         `;
         document.head.appendChild(style);

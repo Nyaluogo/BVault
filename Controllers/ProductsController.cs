@@ -67,10 +67,16 @@ namespace Bingi_Storage.Controllers
                 if (publisher != null)
                 {
                     viewModel._Publisher = publisher;
+                    // Pre-populate publisher data if exists
+                    viewModel.Publisher.Name = publisher.Name;
+                    viewModel.Publisher.Description = publisher.Description;
+                    viewModel.Publisher.Email = publisher.Email;
+                    viewModel.Publisher.Phone = publisher.Phone;
+                    viewModel.Publisher.Country = publisher.Country;
+                    viewModel.Publisher.RevenueShare = publisher.RevenueShare;
                 }
             }
 
-            
             return View(viewModel);
         }
 
@@ -79,210 +85,242 @@ namespace Bingi_Storage.Controllers
             return await _userManager.GetUserAsync(User);
         }
 
+        // Helper method to repopulate ViewModel on validation failure
+        private async Task<ProductCreateViewModel> RepopulateViewModel(ProductCreateViewModel viewModel)
+        {
+            var user = await GetCurrentUser();
+            if (user != null)
+            {
+                viewModel._AppUser = user;
+                var publisher = await _context.Publishers
+                    .FirstOrDefaultAsync(p => p.AppUserId == user.Id);
+                if (publisher != null)
+                {
+                    viewModel._Publisher = publisher;
+                }
+            }
+            return viewModel;
+        }
 
         // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel viewModel)
         {
-            Publisher publisher = new Publisher();
-            if (ModelState.IsValid)
+            // Get the currently authenticated user first
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
             {
-                // Get the currently authenticated user
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser == null)
-                {
-                    // This case should be handled by an [Authorize] attribute on the action or controller
-                    return Challenge(); // Returns a 401 Unauthorized or 403 Forbidden
-                }
+                return Challenge();
+            }
 
-                // Check if an image has been uploaded, validate, process, save, and get URL
-                if (Request.Form.Files != null && Request.Form.Files.Count > 0)
+            // Debug ModelState errors
+            if (!ModelState.IsValid)
+            {
+                // Log all validation errors for debugging
+                var errors = new List<string>();
+                foreach (var modelError in ModelState)
                 {
-                    var imageFile = Request.Form.Files["ImageFile"];
-                    if (imageFile != null && imageFile.Length > 0)
+                    foreach (var error in modelError.Value.Errors)
                     {
-                        // Validate file type (only allow jpg, png, jpeg)
-                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-                        var extension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
-                        if (!allowedExtensions.Contains(extension))
-                        {
-                            ModelState.AddModelError("ImageFile", "Only JPG and PNG images are allowed.");
-                            return View(viewModel);
-                        }
-
-                        // Validate file size (e.g., max 2MB)
-                        const long maxFileSize = 2 * 1024 * 1024;
-                        if (imageFile.Length > maxFileSize)
-                        {
-                            ModelState.AddModelError("ImageFile", "Image size must be less than 2MB.");
-                            return View(viewModel);
-                        }
-
-                        // Generate unique file name and save file
-                        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "products");
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
-                        var fileName = $"{viewModel.Title}_{Guid.NewGuid()}{extension}";
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await imageFile.CopyToAsync(stream);
-                        }
-
-                        viewModel.ImageUrl = $"/uploads/products/{fileName}";
+                        var errorMessage = $"Field: {modelError.Key}, Error: {error.ErrorMessage}";
+                        errors.Add(errorMessage);
+                        System.Diagnostics.Debug.WriteLine(errorMessage);
                     }
                 }
 
-                // Check if payloads have been uploaded, validate, process, save, and get URL
-                var productPayloads = new List<ProductPayload>();
-                var allowedPayloadExtensions = new[] { ".zip", ".rar", ".iso", ".apk" };
-                const long maxPayloadFileSize = 4L * 1024 * 1024 * 1024; // 4GB
+                // Add errors to TempData so you can see them in the view for debugging
+                TempData["ValidationErrors"] = string.Join(" | ", errors);
 
-                // Loop through all files in the request with the name "PayloadFileInput"
-                var files = Request.Form.Files;
-                foreach (IFormFile file in files)
+                // Repopulate the viewModel and return with errors
+                viewModel = await RepopulateViewModel(viewModel);
+                return View(viewModel);
+            }
+
+            Publisher publisher = new Publisher();
+
+            // Check if an image has been uploaded, validate, process, save, and get URL
+            if (Request.Form.Files != null && Request.Form.Files.Count > 0)
+            {
+                var imageFile = Request.Form.Files["ImageFile"];
+                if (imageFile != null && imageFile.Length > 0)
                 {
-                    if (file == null || file.Length == 0 || file.Name != "PayloadFileInput")
-                        continue;
-
-                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                    if (!allowedPayloadExtensions.Contains(extension))
+                    // Validate file type (only allow jpg, png, jpeg)
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                    var extension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(extension))
                     {
-                        ModelState.AddModelError("Payloads", $"File type not allowed: {file.FileName}");
-                        return View(viewModel);
-                    }
-                    if (file.Length > maxPayloadFileSize)
-                    {
-                        ModelState.AddModelError("Payloads", $"File too large: {file.FileName}");
+                        ModelState.AddModelError("ImageFile", "Only JPG and PNG images are allowed.");
+                        viewModel = await RepopulateViewModel(viewModel);
                         return View(viewModel);
                     }
 
-                    // Ensure directory exists
-                    var payloadUploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "products", "payloads");
-                    if (!Directory.Exists(payloadUploadsFolder))
-                        Directory.CreateDirectory(payloadUploadsFolder);
-
-                    // Safe and unique file name
-                    var safeTitle = string.Join("_", viewModel.Title.Split(Path.GetInvalidFileNameChars()));
-                    var payloadFileName = $"{safeTitle}_{Guid.NewGuid()}{extension}";
-                    var payloadFilePath = Path.Combine(payloadUploadsFolder, payloadFileName);
-
-                    // Pseudocode plan:
-                    // 1. For large file uploads, avoid loading the entire file into memory. Use streaming APIs and buffered reads/writes.
-                    // 2. Use asynchronous file I/O (already present).
-                    // 3. Optionally, increase request limits in Startup/Program if needed (not shown here).
-                    // 4. For each payload file, use a buffer to copy the stream in chunks.
-                    // 5. Use FileStreamOptions for .NET 9 for better performance and reliability.
-
-                    // Save file to disk using buffered streaming for large files
-                    var bufferSize = 1024 * 1024; // 1MB buffer
-                    var fileStreamOptions = new FileStreamOptions
+                    // Validate file size (e.g., max 2MB)
+                    const long maxFileSize = 2 * 1024 * 1024;
+                    if (imageFile.Length > maxFileSize)
                     {
-                        Access = FileAccess.Write,
-                        Mode = FileMode.Create,
-                        Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
-                        BufferSize = bufferSize
-                    };
-                    using (var stream = new FileStream(payloadFilePath, fileStreamOptions))
-                    using (var inputStream = file.OpenReadStream())
-                    {
-                        var buffer = new byte[bufferSize];
-                        int bytesRead;
-                        while ((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                        {
-                            await stream.WriteAsync(buffer.AsMemory(0, bytesRead));
-                        }
-                    }
-
-                    // Add to payloads list
-                    productPayloads.Add(new ProductPayload
-                    {
-                        Title = file.FileName,
-                        FileSize = (file.Length / (1024.0 * 1024.0)).ToString("F2") + " MB",
-                        FileUrl = $"/uploads/products/payloads/{payloadFileName}",
-                        IsDemo = false, // Set from form if available
-                        ShortDescription = "", // Set from form if available
-                        UpdatedAt = DateTime.UtcNow
-                    });
-                }
-
-                var existing_publisher = await _context.Publishers
-                    .FirstOrDefaultAsync(p => p.AppUser == currentUser);
-
-
-                // Check if the publisher exists and if the current user owns it
-                if (existing_publisher == null)
-                {
-                    // If publisher does not exist, create a new one
-                    if (viewModel.Publisher == null || string.IsNullOrEmpty(viewModel.Publisher.Value.Name))
-                    {
-                        ModelState.AddModelError("Publisher.Name", "Publisher name is required.");
-                        ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
+                        ModelState.AddModelError("ImageFile", "Image size must be less than 2MB.");
+                        viewModel = await RepopulateViewModel(viewModel);
                         return View(viewModel);
                     }
 
-                    publisher = new Publisher
+                    // Generate unique file name and save file
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "products");
+                    if (!Directory.Exists(uploadsFolder))
                     {
-                        Name = viewModel.Publisher.Value.Name,
-                        Description = viewModel.Publisher.Value.Description,
-                        Email = viewModel.Publisher.Value.Email,
-                        Phone = viewModel.Publisher.Value.Phone,
-                        Country = viewModel.Publisher.Value.Country,
-                        RevenueShare = viewModel.Publisher.Value.RevenueShare,
-                        AppUserId = currentUser.Id, // Assign the current user's ID
-                        CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow
-                    };
-                    _context.Publishers.Add(publisher); // Add the new publisher to the context
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+                    var fileName = $"{viewModel.Title?.Replace(" ", "_")}_{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(stream);
+                    }
+
+                    viewModel.ImageUrl = $"/uploads/products/{fileName}";
                 }
-                else
+            }
+
+            // Check if payloads have been uploaded, validate, process, save, and get URL
+            var productPayloads = new List<ProductPayload>();
+            var allowedPayloadExtensions = new[] { ".zip", ".rar", ".iso", ".apk" };
+            const long maxPayloadFileSize = 4L * 1024 * 1024 * 1024; // 4GB
+
+            // Loop through all files in the request with the name "PayloadFileInput"
+            var files = Request.Form.Files;
+            foreach (IFormFile file in files)
+            {
+                if (file == null || file.Length == 0 || file.Name != "PayloadFileInput")
+                    continue;
+
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (!allowedPayloadExtensions.Contains(extension))
                 {
-                    publisher = existing_publisher;
+                    ModelState.AddModelError("Payloads", $"File type not allowed: {file.FileName}");
+                    viewModel = await RepopulateViewModel(viewModel);
+                    return View(viewModel);
+                }
+                if (file.Length > maxPayloadFileSize)
+                {
+                    ModelState.AddModelError("Payloads", $"File too large: {file.FileName}");
+                    viewModel = await RepopulateViewModel(viewModel);
+                    return View(viewModel);
                 }
 
-                // Map ViewModel to Product entity
-                var product = new Product
+                // Ensure directory exists
+                var payloadUploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "products", "payloads");
+                if (!Directory.Exists(payloadUploadsFolder))
+                    Directory.CreateDirectory(payloadUploadsFolder);
+
+                // Safe and unique file name
+                var safeTitle = string.Join("_", (viewModel.Title ?? "product").Split(Path.GetInvalidFileNameChars()));
+                var payloadFileName = $"{safeTitle}_{Guid.NewGuid()}{extension}";
+                var payloadFilePath = Path.Combine(payloadUploadsFolder, payloadFileName);
+
+                // Save file to disk using buffered streaming for large files
+                var bufferSize = 1024 * 1024; // 1MB buffer
+                var fileStreamOptions = new FileStreamOptions
                 {
-                    Title = viewModel.Title,
-                    CustomUrl = viewModel.CustomUrl,
-                    ShortDescription = viewModel.ShortDescription,
-                    Description = viewModel.Description,
-                    DefaultPrice = viewModel.DefaultPrice,
-                    SalePrice = viewModel.SalePrice,
-                    Discount = viewModel.Discount,
-                    Version = viewModel.Version,
-                    VideoTrailerUrl = viewModel.VideoTrailerUrl,
-                    ImageUrl = viewModel.ImageUrl,
-                    SystemRequirements = viewModel.SystemRequirements,
-                    Documentation = viewModel.Documentation,
-                    Tags = viewModel.Tags,
-                    Genre = viewModel.Genre,
-                    ExternalLinks = viewModel.ExternalLinks,
-                    AgeRestriction = viewModel.AgeRestriction,
-                    IsBettingEnabled = viewModel.IsBettingEnabled,
-                    IsAIGen = viewModel.IsAIGen,
-                    PricingState = (Product.PricingStatus)viewModel.PricingState,
-                    ProductPublishingStatus = (Product.PublishingStatus)viewModel.ProductPublishingStatus,
-                    ReleaseDate = viewModel.ReleaseDate,
-                    PublisherId = publisher.Id,
-                    Payloads = productPayloads,
+                    Access = FileAccess.Write,
+                    Mode = FileMode.Create,
+                    Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
+                    BufferSize = bufferSize
+                };
+                using (var stream = new FileStream(payloadFilePath, fileStreamOptions))
+                using (var inputStream = file.OpenReadStream())
+                {
+                    var buffer = new byte[bufferSize];
+                    int bytesRead;
+                    while ((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        await stream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                    }
+                }
+
+                // Add to payloads list
+                productPayloads.Add(new ProductPayload
+                {
+                    Title = file.FileName,
+                    FileSize = (file.Length / (1024.0 * 1024.0)).ToString("F2") + " MB",
+                    FileUrl = $"/uploads/products/payloads/{payloadFileName}",
+                    IsDemo = false, // Set from form if available
+                    ShortDescription = "", // Set from form if available
+                    UpdatedAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            var existing_publisher = await _context.Publishers
+                .FirstOrDefaultAsync(p => p.AppUser == currentUser);
+
+            // Check if the publisher exists and if the current user owns it
+            if (existing_publisher == null)
+            {
+                // If publisher does not exist, create a new one
+                if (string.IsNullOrEmpty(viewModel.Publisher.Name))
+                {
+                    ModelState.AddModelError("Publisher.Name", "Publisher name is required.");
+                    ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name");
+                    viewModel = await RepopulateViewModel(viewModel);
+                    return View(viewModel);
+                }
+
+                publisher = new Publisher
+                {
+                    Name = viewModel.Publisher.Name,
+                    Description = viewModel.Publisher.Description,
+                    Email = viewModel.Publisher.Email,
+                    Phone = viewModel.Publisher.Phone,
+                    Country = viewModel.Publisher.Country,
+                    RevenueShare = viewModel.Publisher.RevenueShare,
+                    AppUserId = currentUser.Id, // Assign the current user's ID
+                    CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
-
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-
-                //redirect to edit page
-                return RedirectToAction(nameof(Index));
+                _context.Publishers.Add(publisher); // Add the new publisher to the context
+                await _context.SaveChangesAsync(); // Save to get the Publisher ID
             }
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Name", publisher.Id);
-            return View(viewModel);
+            else
+            {
+                publisher = existing_publisher;
+            }
+
+            // Map ViewModel to Product entity
+            var product = new Product
+            {
+                Title = viewModel.Title ?? "Untitled Product",
+                CustomUrl = viewModel.CustomUrl,
+                ShortDescription = viewModel.ShortDescription,
+                Description = viewModel.Description,
+                DefaultPrice = viewModel.DefaultPrice,
+                SalePrice = viewModel.SalePrice,
+                Discount = viewModel.Discount,
+                Version = viewModel.Version,
+                VideoTrailerUrl = viewModel.VideoTrailerUrl,
+                ImageUrl = viewModel.ImageUrl,
+                SystemRequirements = viewModel.SystemRequirements,
+                Documentation = viewModel.Documentation,
+                Tags = viewModel.Tags,
+                Genre = viewModel.Genre,
+                ExternalLinks = viewModel.ExternalLinks,
+                AgeRestriction = viewModel.AgeRestriction,
+                IsBettingEnabled = viewModel.IsBettingEnabled,
+                IsAIGen = viewModel.IsAIGen,
+                PricingState = (Product.PricingStatus)viewModel.PricingState,
+                ProductPublishingStatus = (Product.PublishingStatus)viewModel.ProductPublishingStatus,
+                ReleaseDate = viewModel.ReleaseDate,
+                PublisherId = publisher.Id,
+                Payloads = productPayloads,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _context.Add(product);
+            await _context.SaveChangesAsync();
+
+            //redirect to edit page
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
