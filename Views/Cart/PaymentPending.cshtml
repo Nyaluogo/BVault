@@ -1,0 +1,77 @@
+﻿@model Order
+@{
+    ViewData["Title"] = "Payment Pending";
+}
+
+<div class="bingi-checkout-page">
+    <section class="main-header glass dynamic-bg" style="margin-bottom:2rem;">
+        <div class="header-left">
+            <div class="game-info">
+                <h1 class="game-title gold montserrat">Payment Pending</h1>
+                <p class="short-desc">Please complete your payment</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="pending-container glass section">
+        @if (TempData["PaymentMessage"] != null)
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                @TempData["PaymentMessage"]
+            </div>
+        }
+
+        <div class="pending-details">
+            <h3 class="gold montserrat">Order #@Model.Id</h3>
+            <p>Total Amount: $@(Model.TotalAmount != null ? $"{Model.TotalAmount:F2}" : "0.00")</p>
+            @if (Model.status == Order.Status.PROCESSING)
+            {
+                <div class="payment-status">
+                    <i class="fas fa-spinner fa-spin me-2"></i>
+                    <span>Your payment is being processed. Please do not close this page.</span>
+                </div>
+
+                <div class="mt-4">
+                    <p>If you're using M-Pesa, please check your phone for an STK push prompt and complete the payment.</p>
+                </div>
+            }
+        </div>
+
+        <div class="action-buttons mt-4">
+            <a asp-action="Index" asp-controller="Home" class="btn glass">Return to Home</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (Model.status == Order.Status.PROCESSING && !string.IsNullOrEmpty(TempData["TransactionId"]?.ToString()))
+    {
+        <script>
+            $(document).ready(function() {
+                // Poll for payment status every 5 seconds
+                const checkPaymentStatus = function() {
+                    $.ajax({
+                        url: '@Url.Action("CheckPaymentStatus", "Cart")',
+                        data: {
+                            orderId: '@Model.Id',
+                            transactionId: '@TempData["TransactionId"]'
+                        },
+                        success: function(result) {
+                            if (result.completed) {
+                                window.location.href = '@Url.Action("OrderConfirmation", "Cart", new { orderId = Model.Id })';
+                            } else {
+                                setTimeout(checkPaymentStatus, 5000);
+                            }
+                        },
+                        error: function() {
+                            setTimeout(checkPaymentStatus, 5000);
+                        }
+                    });
+                };
+
+                checkPaymentStatus();
+            });
+        </script>
+    }
+}

@@ -54,6 +54,27 @@ namespace Bingi_Storage.Controllers
             return View(product);
         }
 
+        // GET: Products/MediaPlayer/5
+        public async Task<IActionResult> MediaPlayer(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.Product
+                .Include(p => p.Publisher)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
         // GET: Products/Create
         public async Task<IActionResult> Create()
         {

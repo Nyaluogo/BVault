@@ -9,6 +9,7 @@
         public ICollection<OrderItem> Items { get; set; }
         public AppUser User { get; set; }
         public decimal? TotalAmount { get; set; }
+        public int PaymentMethodId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public Transaction? OrderTransaction { get; set; }
         public enum Status { PENDING, PROCESSING, COMPLETED, CANCELLED, REFUNDED}

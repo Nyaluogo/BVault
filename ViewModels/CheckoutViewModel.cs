@@ -18,5 +18,7 @@ namespace Bingi_Storage.ViewModels
         public string BillingName { get; set; }
         public string BillingEmail { get; set; }
         public string BillingCountry { get; set; }
+        [Required(ErrorMessage = "Please enter phone number")]
+        public string MpesaPhoneNumber { get; set; }
     }
 }

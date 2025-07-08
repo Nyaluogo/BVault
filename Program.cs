@@ -1,5 +1,6 @@
 using Bingi_Storage.Data;
 using Bingi_Storage.Models;
+using Bingi_Storage.Services;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,13 @@ builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = 4L * 1024 * 1024 * 1024; // 4GB
 });
+
+
+// Add the HTTP clients and payment services here
+builder.Services.AddHttpClient<FlutterwaveService>();
+builder.Services.AddHttpClient<MpesaService>();
+builder.Services.AddScoped<FlutterwaveService>();
+builder.Services.AddScoped<MpesaService>();
 
 var app = builder.Build();
 

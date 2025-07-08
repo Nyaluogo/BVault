@@ -21,9 +21,17 @@ namespace Bingi_Storage.ViewModels
             public string Url { get; set; } // Optional, for links
             public string TargetPlatform { get; set; } // e.g., "Windows", "Linux", "MacOS"
             public bool IsDemo { get; set; }
+
+            // Unity WebGL specific properties
+            public string? UnityVersion { get; set; }
+            public int? CanvasWidth { get; set; }
+            public int? CanvasHeight { get; set; }
+            public bool RequiresKeyboard { get; set; }
+            public bool RequiresMouse { get; set; }
+            public bool SupportsMobile { get; set; }
+            public string? GameControls { get; set; }
         }
 
-        // Changed from struct to class to avoid nullable struct binding issues
         public class PublisherInput
         {
             public int Id { get; set; }
@@ -89,10 +97,20 @@ namespace Bingi_Storage.ViewModels
         [Range(0, 21, ErrorMessage = "Age restriction must be between 0 and 21")]
         public int? AgeRestriction { get; set; }
 
+        // Unity WebGL specific properties
+        public bool IsUnityGame { get; set; } = false;
+        public string? UnityVersion { get; set; }
+        public int CanvasWidth { get; set; } = 960;
+        public int CanvasHeight { get; set; } = 600;
+        public bool RequiresKeyboard { get; set; } = true;
+        public bool RequiresMouse { get; set; } = true;
+        public bool SupportsMobile { get; set; } = false;
+        public string? GameControls { get; set; }
+
+
         public ICollection<ProductMedia>? Media { get; set; } = new List<ProductMedia>();
         public ICollection<ProductPayload>? Payloads { get; set; } = new List<ProductPayload>();
 
-        // Changed from nullable struct to non-nullable class
         public PublisherInput Publisher { get; set; } = new PublisherInput();
 
         public ICollection<ProductCategory>? Category { get; set; }

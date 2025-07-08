@@ -14,6 +14,33 @@
         </div>
     </section>
 
+    <!-- Add global error message display area -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>Error:</strong> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["PaymentMessage"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            @TempData["PaymentMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Payment processing status area -->
+    <div id="paymentProcessingStatus" class="d-none alert alert-info mb-3">
+        <div class="spinner-border spinner-border-sm me-2" role="status">
+            <span class="visually-hidden">Processing...</span>
+        </div>
+        <span id="paymentStatusMessage">Processing your payment, please wait...</span>
+    </div>
+
     <div class="checkout-container">
         <div class="checkout-form glass section">
             <form asp-action="CompleteCheckout" method="post">
@@ -47,6 +74,9 @@
                             Insufficient funds in your wallet. Please add funds or select another payment method.
                         </div>
                     </div>
+
+
+                    
 
                     <h3 class="gold montserrat mt-4">Order Review</h3>
 
@@ -99,6 +129,47 @@
                     </div>
                 }
             </form>
+
+            <h3 class="gold montserrat mt-4">Or Pay With External Provider</h3>
+
+            <div class="payment-methods mt-3">
+                @foreach (var method in Model.AvailablePaymentMethods.Where(m =>
+                                m.TransProvider == PaymentMethod.Provider.FLUTTERWAVE ||
+                                m.TransProvider == PaymentMethod.Provider.MPESA ||
+                                m.TransProvider == PaymentMethod.Provider.CRYPTO_WALLET))
+                {
+                    <div class="payment-method-item mb-3">
+                        <form asp-action="ProcessExternalPayment" method="post" class="payment-form">
+                            <input type="hidden" name="paymentMethodId" value="@method.Id" />
+                            <input type="hidden" name="cartId" value="@Model.Cart.Id" />
+                            <input type="hidden" name="returnUrl" value="@Url.Action("PaymentCallback", "Cart", null, Context.Request.Scheme)" />
+
+                            @if (method.TransProvider == PaymentMethod.Provider.MPESA)
+                            {
+                                <div class="form-group mb-3">
+                                    <label asp-for="MpesaPhoneNumber" class="form-label">Phone Number</label>
+                                    <input asp-for="MpesaPhoneNumber" class="form-control glass-input" placeholder="0716900000" />
+                                    <span asp-validation-for="MpesaPhoneNumber" class="text-danger d-block mt-1"></span>
+                                </div>
+                            }
+
+                            <button type="submit" class="btn payment-btn glass payment-submit-btn" data-provider="@method.TransProvider">
+                                @{
+                                    var iconClass = method.TransProvider switch
+                                    {
+                                        PaymentMethod.Provider.FLUTTERWAVE => "fa-credit-card",
+                                        PaymentMethod.Provider.MPESA => "fa-mobile-alt",
+                                        PaymentMethod.Provider.CRYPTO_WALLET => "fa-bitcoin",
+                                        _ => "fa-money-bill"
+                                    };
+                                }
+                                <i class="fas @iconClass me-2"></i>
+                                Pay with @method.Name
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
         </div>
 
         <div class="checkout-sidebar glass section">
@@ -152,6 +223,26 @@
     </div>
 </div>
 
+<!-- Debug Information Modal -->
+<div class="modal fade" id="debugModal" tabindex="-1" aria-labelledby="debugModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="debugModalLabel">Payment Debug Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="debugInfo" class="bg-light p-3 rounded">
+                    <p>No debug information available.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -159,10 +250,11 @@
 
     <script>
         $(document).ready(function() {
+            // Wallet balance check
             $('#SelectedWalletId').change(function() {
                 const walletId = $(this).val();
                 const walletBalance = parseFloat($(this).find(':selected').text().match(/Balance: \$([0-9.]+)/)[1]);
-                const orderTotal = @Model.Cart.Total;
+                const orderTotal = @Html.Raw(Model.Cart.Total);
 
                 if (walletBalance < orderTotal) {
                     $('.wallet-balance-warning').addClass('d-block').removeClass('d-none');
@@ -170,6 +262,47 @@
                     $('.wallet-balance-warning').addClass('d-none').removeClass('d-block');
                 }
             });
+
+            // Add click handling for payment buttons with visual feedback
+            $('.payment-form').on('submit', function(e) {
+                // Show loading status
+                $('#paymentProcessingStatus').removeClass('d-none');
+
+                // Disable all payment buttons to prevent double submission
+                $('.payment-submit-btn').prop('disabled', true);
+
+                // Get provider type for custom message
+                const provider = $(this).find('button').data('provider');
+                if (provider === 'MPESA') {
+                    $('#paymentStatusMessage').html('Sending M-Pesa payment request. Check your phone for STK push...');
+                } else if (provider === 'FLUTTERWAVE') {
+                    $('#paymentStatusMessage').html('Redirecting to Flutterwave payment gateway...');
+                } else {
+                    $('#paymentStatusMessage').html('Processing payment request...');
+                }
+
+                // Optional: Add AJAX error handling
+                $(window).on('error', function() {
+                    $('#paymentProcessingStatus').removeClass('d-none')
+                        .removeClass('alert-info')
+                        .addClass('alert-danger');
+                    $('#paymentStatusMessage').html('There was a problem processing your payment. Please try again.');
+                    $('.payment-submit-btn').prop('disabled', false);
+                    return true;
+                });
+
+                // Let the form submit normally
+                return true;
+            });
+
+            // Show debug modal if there's debug info in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('debug')) {
+                const debugInfo = urlParams.get('debug');
+                $('#debugInfo').text(debugInfo);
+                var debugModal = new bootstrap.Modal(document.getElementById('debugModal'));
+                debugModal.show();
+            }
         });
     </script>
 }

@@ -1,0 +1,672 @@
+﻿@model Bingi_Storage.Models.Product
+
+@{
+    ViewData["Title"] = $"Play {Model.Title}";
+    Layout = null; // Use minimal layout for game player
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Model.Title - Bingi Games</title>
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+
+    <!-- Unity WebGL Template dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/progressbar.js/1.1.0/progressbar.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #000;
+        }
+
+        .game-header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .game-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .game-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .game-title {
+            color: #ffd700;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .game-publisher {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-header {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+            .btn-header:hover {
+                background: rgba(255, 215, 0, 0.2);
+                transform: translateY(-2px);
+            }
+
+        .game-viewport {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+        }
+
+        .unity-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1920px;
+            max-height: 1080px;
+        }
+
+        #unity-canvas {
+            width: 100%;
+            height: 100%;
+            background: #231F20;
+            display: block;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+            .loading-overlay.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 215, 0, 0.3);
+            border-top: 4px solid #ffd700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        
+
+        .loading-text {
+            color: #ffd700;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .loading-progress {
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .loading-percentage {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .game-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+            .game-controls.visible {
+                opacity: 1;
+            }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            transition: all 0.3s ease;
+        }
+
+            .control-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.1);
+            }
+
+            .control-btn.active {
+                background: rgba(255, 215, 0, 0.3);
+                border-color: #ffd700;
+                color: #ffd700;
+            }
+
+        .error-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+
+        .error-content {
+            text-align: center;
+            color: white;
+        }
+
+        .error-icon {
+            font-size: 64px;
+            color: #ff4444;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 200;
+            transition: all 0.3s ease;
+        }
+
+            .fullscreen-btn:hover {
+                background: rgba(0, 0, 0, 0.9);
+                transform: scale(1.1);
+            }
+
+       
+
+        /* Unity WebGL specific styles */
+        .unity-desktop {
+            width: 960px;
+            height: 600px;
+        }
+
+        .unity-mobile {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Game Header -->
+        <div class="game-header">
+            <div class="game-info">
+                <img src="@Model.ImageUrl" alt="@Model.Title" class="game-logo" />
+                <div>
+                    <h1 class="game-title">@Model.Title</h1>
+                    <div class="game-publisher">by @Model.Publisher?.Name</div>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="btn-header" onclick="toggleInstructions()">
+                    📋 Instructions
+                </button>
+                <button class="btn-header" onclick="restartGame()">
+                    🔄 Restart
+                </button>
+                <a href="@Url.Action("Details", new { id = Model.Id })" class="btn-header">
+                    ← Back to Game
+                </a>
+            </div>
+        </div>
+
+        <!-- Game Viewport -->
+        <div class="game-viewport">
+            <div class="unity-container">
+                <canvas id="unity-canvas"></canvas>
+
+                <!-- Loading Overlay -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Loading @Model.Title...</div>
+                    <div class="loading-progress">
+                        <div class="loading-progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="loading-percentage" id="progressText">0%</div>
+                </div>
+
+                <!-- Error Overlay -->
+                <div class="error-overlay" id="errorOverlay">
+                    <div class="error-content">
+                        <div class="error-icon">⚠️</div>
+                        <div class="error-title">Failed to Load Game</div>
+                        <div class="error-message" id="errorMessage">
+                            Please check your internet connection and try again.
+                        </div>
+                        <button class="btn-header" onclick="location.reload()">
+                            🔄 Retry
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Game Controls -->
+                <div class="game-controls" id="gameControls">
+                    <button class="control-btn" onclick="togglePause()" id="pauseBtn" title="Pause/Resume">
+                        ⏸️
+                    </button>
+                    <button class="control-btn" onclick="toggleMute()" id="muteBtn" title="Mute/Unmute">
+                        🔊
+                    </button>
+                    <button class="control-btn" onclick="toggleFullscreen()" title="Fullscreen">
+                        ⛶
+                    </button>
+                    <button class="control-btn" onclick="takeScreenshot()" title="Screenshot">
+                        📷
+                    </button>
+                </div>
+
+                <!-- Fullscreen Button -->
+                <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Fullscreen">
+                    ⛶
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div id="instructionsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; padding: 20px; box-sizing: border-box;">
+        <div style="background: #1a1a2e; border: 2px solid #ffd700; border-radius: 12px; max-width: 600px; margin: 50px auto; padding: 30px; color: white;">
+            <h2 style="color: #ffd700; margin-top: 0;">Game Instructions</h2>
+            <div style="margin-bottom: 20px;">
+                <p><strong>How to Play:</strong></p>
+                <p>@Html.Raw(Model.Documentation ?? "Use WASD or arrow keys to move. Click to interact. Press ESC for menu.")</p>
+
+                <p><strong>Controls:</strong></p>
+                <ul>
+                    <li>🎮 Use keyboard and mouse</li>
+                    <li>⏸️ Space or P to pause</li>
+                    <li>🔊 M to mute/unmute</li>
+                    <li>⛶ F11 for fullscreen</li>
+                </ul>
+
+                <p><strong>System Requirements:</strong></p>
+                <p>@Model.SystemRequirements</p>
+            </div>
+            <button class="btn-header" onclick="toggleInstructions()" style="float: right;">
+                ✖️ Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Game state management
+        let gameInstance = null;
+        let gameLoaded = false;
+        let gamePaused = false;
+        let gameMuted = false;
+        let progressBar = document.getElementById('progressBar');
+        let progressText = document.getElementById('progressText');
+        let loadingOverlay = document.getElementById('loadingOverlay');
+        let errorOverlay = document.getElementById('errorOverlay');
+        let gameControls = document.getElementById('gameControls');
+
+        // Unity WebGL configuration
+        const unityConfig = {
+            dataUrl: getGameDataUrl(),
+            frameworkUrl: getGameFrameworkUrl(),
+            codeUrl: getGameCodeUrl(),
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "@Model.Publisher?.Name",
+            productName: "@Model.Title",
+            productVersion: "@Model.Version"
+        };
+
+        // Get game URLs from ProductPayload
+        function getGameDataUrl() {
+            @if (Model.Payloads?.Any(p => p._Type == Bingi_Storage.Models.ProductPayload.Type.BIN_WEB) == true)
+            {
+                    var webPayload = Model.Payloads.FirstOrDefault(p => p._Type == Bingi_Storage.Models.ProductPayload.Type.BIN_WEB);
+                    @:return '@webPayload?.FileUrl' + '/Build/@(Model.Title).data';
+            }
+            else
+            {
+                    @:return '/games/@Model.Id/Build/@(Model.Title).data';
+            }
+        }
+
+        function getGameFrameworkUrl() {
+            @if (Model.Payloads?.Any(p => p._Type == Bingi_Storage.Models.ProductPayload.Type.BIN_WEB) == true)
+            {
+                    var webPayload = Model.Payloads.FirstOrDefault(p => p._Type == Bingi_Storage.Models.ProductPayload.Type.BIN_WEB);
+                    @:return '@webPayload?.FileUrl' + '/Build/@(Model.Title).framework.js';
+            }
+            else
+            {
+                    @:return '/games/@Model.Id/Build/@(Model.Title).framework.js';
+            }
+        }
+
+        function getGameCodeUrl() {
+            @if (Model.Payloads?.Any(p => p._Type == Bingi_Storage.Models.ProductPayload.Type.BIN_WEB) == true)
+            {
+                    var webPayload = Model.Payloads.FirstOrDefault(p => p._Type == Bingi_Storage.Models.ProductPayload.Type.BIN_WEB);
+                    @:return '@webPayload?.FileUrl' + '/Build/@(Model.Title).wasm';
+            }
+            else
+            {
+                    @:return '/games/@Model.Id/Build/@(Model.Title).wasm';
+            }
+        }
+
+        // Initialize Unity WebGL
+        function initializeGame() {
+            const canvas = document.querySelector("#unity-canvas");
+
+            // Create Unity instance
+            createUnityInstance(canvas, unityConfig, (progress) => {
+                // Update loading progress
+                const percentage = Math.round(progress * 100);
+                progressBar.style.width = percentage + '%';
+                progressText.textContent = percentage + '%';
+            }).then((unityInstance) => {
+                gameInstance = unityInstance;
+                gameLoaded = true;
+
+                // Hide loading overlay
+                loadingOverlay.classList.add('hidden');
+
+                // Show game controls after a delay
+                setTimeout(() => {
+                    gameControls.classList.add('visible');
+                }, 1000);
+
+                // Focus on canvas for input
+                canvas.focus();
+
+                console.log('Game loaded successfully');
+
+            }).catch((message) => {
+                // Show error overlay
+                showError('Failed to load game: ' + message);
+                console.error('Unity loading failed: ' + message);
+            });
+        }
+
+        // Show error overlay
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            errorOverlay.style.display = 'flex';
+            loadingOverlay.classList.add('hidden');
+        }
+
+        // Game control functions
+        function togglePause() {
+            if (!gameLoaded || !gameInstance) return;
+
+            const pauseBtn = document.getElementById('pauseBtn');
+
+            if (gamePaused) {
+                gameInstance.SendMessage('GameManager', 'ResumGame');
+                pauseBtn.textContent = '⏸️';
+                pauseBtn.classList.remove('active');
+                gamePaused = false;
+            } else {
+                gameInstance.SendMessage('GameManager', 'PauseGame');
+                pauseBtn.textContent = '▶️';
+                pauseBtn.classList.add('active');
+                gamePaused = true;
+            }
+        }
+
+        function toggleMute() {
+            if (!gameLoaded || !gameInstance) return;
+
+            const muteBtn = document.getElementById('muteBtn');
+
+            if (gameMuted) {
+                gameInstance.SendMessage('AudioManager', 'UnmuteAudio');
+                muteBtn.textContent = '🔊';
+                muteBtn.classList.remove('active');
+                gameMuted = false;
+            } else {
+                gameInstance.SendMessage('AudioManager', 'MuteAudio');
+                muteBtn.textContent = '🔇';
+                muteBtn.classList.add('active');
+                gameMuted = true;
+            }
+        }
+
+        function restartGame() {
+            if (!gameLoaded || !gameInstance) {
+                location.reload();
+                return;
+            }
+
+            if (confirm('Are you sure you want to restart the game? All progress will be lost.')) {
+                gameInstance.SendMessage('GameManager', 'RestartGame');
+            }
+        }
+
+        function takeScreenshot() {
+            if (!gameLoaded || !gameInstance) return;
+
+            const canvas = document.querySelector("#unity-canvas");
+            const link = document.createElement('a');
+            link.download = `@Model.Title-screenshot-${new Date().getTime()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function toggleFullscreen() {
+            const container = document.querySelector('.game-container');
+
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.error('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function toggleInstructions() {
+            const modal = document.getElementById('instructionsModal');
+            modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            switch(event.code) {
+                case 'KeyP':
+                case 'Space':
+                    event.preventDefault();
+                    togglePause();
+                    break;
+                case 'KeyM':
+                    event.preventDefault();
+                    toggleMute();
+                    break;
+                case 'F11':
+                    event.preventDefault();
+                    toggleFullscreen();
+                    break;
+                case 'Escape':
+                    if (document.getElementById('instructionsModal').style.display !== 'none') {
+                        toggleInstructions();
+                    }
+                    break;
+            }
+        });
+
+        // Handle fullscreen changes
+        document.addEventListener('fullscreenchange', function() {
+            const canvas = document.querySelector("#unity-canvas");
+            if (document.fullscreenElement) {
+                canvas.classList.add('unity-mobile');
+                canvas.classList.remove('unity-desktop');
+            } else {
+                canvas.classList.add('unity-desktop');
+                canvas.classList.remove('unity-mobile');
+            }
+        });
+
+        // Auto-hide controls
+        let controlsTimeout;
+        function showControls() {
+            gameControls.classList.add('visible');
+            clearTimeout(controlsTimeout);
+            controlsTimeout = setTimeout(() => {
+                if (!gamePaused) {
+                    gameControls.classList.remove('visible');
+                }
+            }, 3000);
+        }
+
+        document.addEventListener('mousemove', showControls);
+        document.addEventListener('keydown', showControls);
+
+        // Initialize game when Unity loader is ready
+        function loadUnityLoader() {
+            if (typeof createUnityInstance !== 'undefined') {
+                initializeGame();
+            } else {
+                // Load Unity WebGL loader
+                const script = document.createElement('script');
+                script.src = unityConfig.frameworkUrl;
+                script.onload = initializeGame;
+                script.onerror = () => showError('Failed to load Unity WebGL framework');
+                document.head.appendChild(script);
+            }
+        }
+
+        // Start loading when page is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we have a valid game payload
+            @if (Model.Payloads?.Any(p => p._Type == Bingi_Storage.Models.ProductPayload.Type.BIN_WEB) != true)
+            {
+                    @:showError('No WebGL build found for this game. Please contact the developer.');
+                    @:return;
+            }
+
+            setTimeout(loadUnityLoader, 500);
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (gameInstance) {
+                gameInstance.Quit();
+            }
+        });
+
+        // Performance monitoring
+        let lastFrameTime = performance.now();
+        function updatePerformance() {
+            const currentTime = performance.now();
+            const deltaTime = currentTime - lastFrameTime;
+            lastFrameTime = currentTime;
+
+            // Log performance issues
+            if (deltaTime > 100 && gameLoaded) {
+                console.warn('Performance issue detected: Frame time', deltaTime, 'ms');
+            }
+
+            requestAnimationFrame(updatePerformance);
+        }
+        requestAnimationFrame(updatePerformance);
+    </script>
+</body>
+</html>

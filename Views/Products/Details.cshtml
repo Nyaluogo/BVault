@@ -1,6 +1,6 @@
 ﻿@model Bingi_Storage.Models.Product
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"Play {Model.Title}";
 }
 <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
 <div class="bingi-product-page">
@@ -14,12 +14,21 @@
                 <div class="stats">
                     <span>⭐ @Model.AverageRating <span class="muted">(@Model.TotalRatings reviews)</span></span>
                     <span>• @Model.DownloadCount downloads</span>
-                    <span>• 🎮 Platforms</span>
+                    <span>
+                        • <span>
+                            • 🎮
+                            <span title="Windows">🪟</span>
+                            <span title="Android">🤖</span>
+                            <span title="Linux">🐧</span>
+                            <span title="Web">🌐</span>
+                        </span>
+                    </span>
                     <span>• @Model.AgeRestriction+</span>
                 </div>
                 <p class="short-desc">@Model.ShortDescription</p>
                 <div class="actions">
-                    <button class="btn glass">Play Game</button>
+                    @* <button class="btn glass">Play Game</button> *@
+                    <a asp-action="MediaPlayer" asp-route-id="@Model.Id" class="btn glass">Play Game</a>
                     
                     @* buy button *@
                     <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">

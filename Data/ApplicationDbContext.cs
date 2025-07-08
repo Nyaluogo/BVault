@@ -153,7 +153,8 @@ namespace Bingi_Storage.Data
             // Order <-> OrderItems (1:many)
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.Items)
-                .WithOne()
+                .WithOne(i => i.Order)
+                .HasForeignKey(i => i.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // ShoppingCart <-> CartItem (1:many)
@@ -232,23 +233,64 @@ namespace Bingi_Storage.Data
             modelBuilder.Entity<Product>().HasData(
                 new Product { Id = 1, PublisherId = 1, Title = "BINGIMAN", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163014.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 2, PublisherId = 1, Title = "Savage Gears", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/SavageGearsOfficialPoster-1-scaled.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 3, PublisherId = 1, Title = "BINGIMAN 3", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 4, PublisherId = 1, Title = "Debe", ShortDescription = "An exciting strategy game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 3, PublisherId = 1, Title = "BINGIMAN 3", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://img.itch.zone/aW1nLzM1Mzc5MDcuanBn/105x83%23/viiAbE.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 4, PublisherId = 1, Title = "Debe", ShortDescription = "The Ultimate KEnyan Political strategy game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://img.itch.zone/aW1nLzE5NDM1MjUyLmpwZw==/105x83%23/bNN%2F9B.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 5, PublisherId = 1, Title = "Political Rally", ShortDescription = "An exciting racing game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
                 new Product { Id = 6, PublisherId = 1, Title = "Nafas", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://nyabingi.co.ke/index/wp-content/uploads/2025/02/Screenshot-2025-02-18-163208.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 7, PublisherId = 1, Title = "Political Fighter", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 8, PublisherId = 1, Title = "Bingivision", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
-                new Product { Id = 9, PublisherId = 1, Title = "Armed Rebellion", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://example.com/sample-game.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
+                new Product { Id = 7, PublisherId = 1, Title = "Political Fighter", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://img.itch.zone/aW1nLzE4MTU3OTY4LnBuZw==/105x83%23/5Qz2Ii.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 8, PublisherId = 1, Title = "Bingivision", ShortDescription = "An exciting simulation game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://img.itch.zone/aW1nLzExNzk3MzkyLmpwZw==/105x83%23/csj7TB.jpg", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) },
+                new Product { Id = 9, PublisherId = 1, Title = "Armed Rebellion", ShortDescription = "An exciting action game.", Description = "This is a detailed description of the sample game.", SalePrice = 29.99m, FileSize = 5.0m, Version = 1.0m, ImageUrl = "https://img.itch.zone/aW1nLzE4MTU3OTY4LnBuZw==/105x83%23/5Qz2Ii.png", SystemRequirements = "Windows 10 or higher", AgeRestriction = 18, DownloadCount = 1000, AverageRating = 4.5m, TotalRatings = 200, IsBettingEnabled = false, ProductPublishingStatus = Models.Product.PublishingStatus.DRAFT, CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc), UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc) }
             );
 
-            
+
 
             // PaymentMethod seed data
-            //modelBuilder.Entity<PaymentMethod>().HasData(
-            //    new PaymentMethod { Id = 1, Name = "Visa", PayType = PaymentMethod.Type.CARD, TransProvider = PaymentMethod.Provider.VISA, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-            //    new PaymentMethod { Id = 2, Name = "MasterCard", PayType = PaymentMethod.Type.CARD, TransProvider = PaymentMethod.Provider.MASTERCARD, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-            //    new PaymentMethod { Id = 3, Name = "PayPal", PayType = PaymentMethod.Type.E_WALLET, TransProvider = PaymentMethod.Provider.PAYPAL, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-            //);
+            modelBuilder.Entity<PaymentMethod>().HasData(
+                new PaymentMethod
+                {
+                    Id = 1,
+                    Name = "M-Pesa",
+                    PayType = PaymentMethod.Type.MOBILE_MONEY,
+                    TransProvider = PaymentMethod.Provider.MPESA,
+                    Description = "Pay directly with M-Pesa",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new PaymentMethod
+                {
+                    Id = 2,
+                    Name = "Flutterwave",
+                    PayType = PaymentMethod.Type.E_WALLET,
+                    TransProvider = PaymentMethod.Provider.FLUTTERWAVE,
+                    Description = "Pay with multiple methods via Flutterwave",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new PaymentMethod
+                {
+                    Id = 3,
+                    Name = "Crypto Wallet",
+                    PayType = PaymentMethod.Type.CRYPTO,
+                    TransProvider = PaymentMethod.Provider.CRYPTO_WALLET,
+                    Description = "Pay with cryptocurrency",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                },
+                new PaymentMethod
+                {
+                    Id = 4,
+                    Name = "Airtel Money",
+                    PayType = PaymentMethod.Type.MOBILE_MONEY,
+                    TransProvider = PaymentMethod.Provider.AIRTEL_MONEY,
+                    Description = "Pay with Airtel Money",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 6, 26, 16, 46, 50, DateTimeKind.Utc)
+                }
+            );
         }
 
 

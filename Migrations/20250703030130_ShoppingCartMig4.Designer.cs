@@ -4,6 +4,7 @@ using Bingi_Storage.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bingi_Storage.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250703030130_ShoppingCartMig4")]
+    partial class ShoppingCartMig4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -446,7 +449,7 @@ namespace Bingi_Storage.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -467,6 +470,8 @@ namespace Bingi_Storage.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
                 });
@@ -741,7 +746,7 @@ namespace Bingi_Storage.Migrations
                             Description = "This is a detailed description of the sample game.",
                             DownloadCount = 1000,
                             FileSize = 5.0m,
-                            ImageUrl = "https://img.itch.zone/aW1nLzM1Mzc5MDcuanBn/105x83%23/viiAbE.jpg",
+                            ImageUrl = "https://example.com/sample-game.jpg",
                             IsAIGen = false,
                             IsBettingEnabled = false,
                             PricingState = 2,
@@ -764,14 +769,14 @@ namespace Bingi_Storage.Migrations
                             Description = "This is a detailed description of the sample game.",
                             DownloadCount = 1000,
                             FileSize = 5.0m,
-                            ImageUrl = "https://img.itch.zone/aW1nLzE5NDM1MjUyLmpwZw==/105x83%23/bNN%2F9B.jpg",
+                            ImageUrl = "https://example.com/sample-game.jpg",
                             IsAIGen = false,
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
                             PublisherId = 1,
                             SalePrice = 29.99m,
-                            ShortDescription = "The Ultimate KEnyan Political strategy game.",
+                            ShortDescription = "An exciting strategy game.",
                             SystemRequirements = "Windows 10 or higher",
                             Title = "Debe",
                             TotalRatings = 200,
@@ -833,7 +838,7 @@ namespace Bingi_Storage.Migrations
                             Description = "This is a detailed description of the sample game.",
                             DownloadCount = 1000,
                             FileSize = 5.0m,
-                            ImageUrl = "https://img.itch.zone/aW1nLzE4MTU3OTY4LnBuZw==/105x83%23/5Qz2Ii.png",
+                            ImageUrl = "https://example.com/sample-game.jpg",
                             IsAIGen = false,
                             IsBettingEnabled = false,
                             PricingState = 2,
@@ -856,14 +861,14 @@ namespace Bingi_Storage.Migrations
                             Description = "This is a detailed description of the sample game.",
                             DownloadCount = 1000,
                             FileSize = 5.0m,
-                            ImageUrl = "https://img.itch.zone/aW1nLzExNzk3MzkyLmpwZw==/105x83%23/csj7TB.jpg",
+                            ImageUrl = "https://example.com/sample-game.jpg",
                             IsAIGen = false,
                             IsBettingEnabled = false,
                             PricingState = 2,
                             ProductPublishingStatus = 0,
                             PublisherId = 1,
                             SalePrice = 29.99m,
-                            ShortDescription = "An exciting simulation game.",
+                            ShortDescription = "An exciting action game.",
                             SystemRequirements = "Windows 10 or higher",
                             Title = "Bingivision",
                             TotalRatings = 200,
@@ -879,7 +884,7 @@ namespace Bingi_Storage.Migrations
                             Description = "This is a detailed description of the sample game.",
                             DownloadCount = 1000,
                             FileSize = 5.0m,
-                            ImageUrl = "https://img.itch.zone/aW1nLzE4MTU3OTY4LnBuZw==/105x83%23/5Qz2Ii.png",
+                            ImageUrl = "https://example.com/sample-game.jpg",
                             IsAIGen = false,
                             IsBettingEnabled = false,
                             PricingState = 2,
@@ -1049,15 +1054,6 @@ namespace Bingi_Storage.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BuildTarget")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CanvasHeight")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CanvasWidth")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -1067,32 +1063,11 @@ namespace Bingi_Storage.Migrations
                     b.Property<int>("DownloadCount")
                         .HasColumnType("int");
 
-                    b.Property<bool>("EnableAudioAutoPlay")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("EnableWebGLStreaming")
-                        .HasColumnType("bit");
-
                     b.Property<string>("FileSize")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FileUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GameCodeUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GameControls")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GameDataUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GameFrameworkUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GameSymbolsUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDemo")
@@ -1104,29 +1079,11 @@ namespace Bingi_Storage.Migrations
                     b.Property<int>("ProductPublishingStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("QualitySettings")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("RequiresKeyboard")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("RequiresMouse")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ShortDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("SupportsFullscreen")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("SupportsMobile")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UnityVersion")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -1341,7 +1298,7 @@ namespace Bingi_Storage.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("WalletId")
+                    b.Property<Guid>("WalletId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -1896,13 +1853,18 @@ namespace Bingi_Storage.Migrations
 
             modelBuilder.Entity("Bingi_Storage.Models.OrderItem", b =>
                 {
-                    b.HasOne("Bingi_Storage.Models.Order", "Order")
+                    b.HasOne("Bingi_Storage.Models.Order", null)
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Bingi_Storage.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Order");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Bingi_Storage.Models.Product", b =>
@@ -2022,7 +1984,8 @@ namespace Bingi_Storage.Migrations
                     b.HasOne("Bingi_Storage.Models.UserWallet", "Wallet")
                         .WithMany()
                         .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("PaymentMethod");
 
